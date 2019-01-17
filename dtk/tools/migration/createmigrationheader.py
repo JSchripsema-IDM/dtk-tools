@@ -9,7 +9,8 @@ from dtk.tools.migration.MigrationFile import MigrationTypes
 
 def get_argument_parser() -> ArgumentParser:
     """
-    Creates an argument parser for the createmigrationheader tool
+    Create an argument parser for the createmigrationheader tool.
+    
     Returns:
 
     """

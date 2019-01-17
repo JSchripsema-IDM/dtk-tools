@@ -9,14 +9,14 @@ import matplotlib.pyplot as plt
 
 def generate_node_properties(demographics_file_path: str) -> Tuple[dict, dict]:
     """
-    Generate a node label to dtk id lookup and a list of dictionary of select node properties
+    Generate a node label to EMOD ID lookup and a list of dictionary of select node properties
     needed for building graphs.
 
     Args:
-        demographics_file_path:
+        demographics_file_path: The path to the demographics file. 
 
     Returns:
-        The node_label_2_id map and node_properties dictionary
+        The **node_label_2_id** map and **node_properties**.
 
     """
     node_label_2_id = {}
@@ -39,11 +39,10 @@ def generate_node_properties(demographics_file_path: str) -> Tuple[dict, dict]:
 
 def read_csv_migration_network_file(migration_network_file: TextIO) -> dict:
     """
-    Reads a csv migration file and converts it into an adjanceny list that can be used by GraphGenerators
+    Read a CSV migration file and converts it into an adjacency list that can be used by GraphGenerators.
 
     Args:
-        migration_network_file: A File-like object that we will read from. Expect the object to be in the following
-          Format::
+        migration_network_file: A file-like object that is read from. Must be in the following format::
             
             node_label 1,  2,  3,  4,  5
             1     w11 w12  w13 w14 w15
@@ -53,7 +52,7 @@ def read_csv_migration_network_file(migration_network_file: TextIO) -> dict:
             5     w51       ...
 
     Returns:
-        Dictionary representing the network adjacency_list
+        A dictionary representing the network **adjacency_list**.
     """
 
     reader = csv.DictReader(migration_network_file)
@@ -77,9 +76,10 @@ class GraphGenerator(object):
                  node_label_2_id: Union[dict, None] = None,
                  node_properties: Union[dict, None] = None):
         """
+        Generate the graph of the nodes used in migration.
 
         Args:
-            migration_network_file_path: Path to migration network file.
+            migration_network_file_path: The path to migration network file.
 
             The file should be in the following format::
             
@@ -103,12 +103,9 @@ class GraphGenerator(object):
                     ...
                 }
                 
-            demographics_file_path: Path to the demographics file. We use this to extra the node properties and the
-            build the node label_2_id array
-            node_label_2_id: Optional dictionary that maps node ids to labels. If the demographics_file_path is
-             specified this is ignored. You must also specify the node_properties when providing node_label_2_id.
-            node_properties: Optional dictionary that specifies the node properties. f the demographics_file_path is
-             specified this is ignored. You must also specify node_label_2_id with this parameter
+            demographics_file_path: The path to the demographics file. Used to extract the node properties and the build the node **label_2_id** array.
+            node_label_2_id: Optional, dictionary that maps node IDs to labels. If the **demographics_file_path**, is specified this is ignored. You must also specify the **node_properties** when providing **node_label_2_id**.
+            node_properties: Optional, dictionary that specifies the node properties. If the **demographics_file_path** is specified, this is ignored. You must also specify **node_label_2_id** with this parameter.
         """
         self.migration_network_file_path = migration_network_file_path
 
@@ -126,13 +123,12 @@ class GraphGenerator(object):
 
     def load_migration_network_file(self) -> dict:
         """
-        Loads a migration network file into an adjacency list. The file is read from migration_network_file_path that
-        was passed in during the initialization of the class. The the input file contains '.csv', it will be read in
-        using read_csv_migration_network_file. if the input file contains '.json' in its name, the migration file
-        will be loaded from json file
+        Load a migration network file into an adjacency list. The file is read from **migration_network_file_path** that
+        was passed in during the initialization of the class. The the input file contains '.csv', it is read in
+        using **read_csv_migration_network_file**. if the input file contains '.json' in its name, the migration file is loaded from a JSON file.
 
         Returns:
-            None
+            None.
         """
         with open(self.migration_network_file_path, 'r') as mig_f:
 
@@ -151,33 +147,33 @@ class GraphGenerator(object):
 
     def extract_dtk_adjacency_list(self, src: dict) -> dict:
         """
-        Converts the input dictionary into a dtk adjacency list by matching node labels to dtk ids
+        Convert the input dictionary into an EMOD adjacency list by matching node labels to EMOD IDs.
 
         Args:
-            src: Adjacency list by node label An example input is::
+            src: Adjacency list by node label. For example::
             
-                {
-                "node_label1": {
-                                #key         # weight
-                                "node_label2": 0.5,
-                                "node_label4": 0.4,
-                                "node_label3": 0.4,
-                                "node_label5": 1,
-                                ...
-                              },
+                    {
+                    "node_label1": {
+                                    #key         # weight
+                                    "node_label2": 0.5,
+                                    "node_label4": 0.4,
+                                    "node_label3": 0.4,
+                                    "node_label5": 1,
+                                    ...
+                                  },
 
-                "node_label2": {
-                                #key         # weight
-                                "node_label1": 0.4,
-                                "node_label3": 0.4,
-                                "node_label10": 1,
-                                ...
-                              },
-                ...
-                }
+                    "node_label2": {
+                                    #key         # weight
+                                    "node_label1": 0.4,
+                                    "node_label3": 0.4,
+                                    "node_label10": 1,
+                                    ...
+                                  },
+                    ...
+                    }
             
         Returns:
-            Adjacency list by dtk node id
+            An adjacency list by EMOD node ID.
 
         """
         adj_list_dtk_node_ids = {}
@@ -197,19 +193,19 @@ class GraphGenerator(object):
     @abc.abstractmethod
     def generate_graph(self) -> nx.Graph():
         """
-        Builds the a networkx Graph object from the specified topology,  migration_network_file
+        Build the a networkx graph object from the specified topology,  **migration_network_file**.
 
         Returns:
-            The generated graph object
+            The generated graph object.
         """
         pass
 
     def get_topology(self) -> nx.Graph():
         """
-        Return the previously generated graph object
+        Return the previously generated graph object.
 
         Returns: 
-            The previously generated graph. Is the graph has not been generated, this will return None
+            The previously generated graph. Is the graph has not been generated, this will return None.
 
         """
         return self.graph

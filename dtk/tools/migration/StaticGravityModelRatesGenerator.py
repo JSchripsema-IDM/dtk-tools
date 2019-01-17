@@ -9,7 +9,7 @@ import os
 
 class StaticGravityModelRatesGenerator(LinkRatesModelGenerator):
     """
-    GravityModel where the gravity params are static(pre-calculated)
+    GravityModel where the gravity parameters are static (pre-calculated).
     """
 
     def __init__(self, demographics_file_path: str, gravity_params: np.array,
@@ -17,10 +17,10 @@ class StaticGravityModelRatesGenerator(LinkRatesModelGenerator):
         """
 
         Args:
-            demographics_file_path: Demographics file to load data from
-            gravity_params: a list/array of gravity parameters used to calculated migration rate. Expected three
-            positive value and a negative value.
-            exclude_nodes: List of nodes to exclude from link rate generation
+            demographics_file_path: Path to the demographics file to load.
+            gravity_params: A list/array of gravity parameters used to calculated migration rate. Expects three
+            positive values and one negative value.
+            exclude_nodes: A list of nodes to exclude from link rate generation.
         """
         super().__init__()  # This Model has no graph
 
@@ -75,16 +75,16 @@ class StaticGravityModelRatesGenerator(LinkRatesModelGenerator):
 
     def compute_migration_probability(self, ph: int, pd: int, d: float) -> float:
         """
-        Compute the probability of migration based on the gravity params, the population of one node and the population
-        of a second node, and their distance from each other
+        Compute the probability of migration based on the gravity parameters, the population of one node and the population
+        of a second node, and their distance from each other.
 
         Args:
-            ph: Population of node 1
-            pd: Population of node 2
-            d:  distance apart
+            ph: Population of node 1.
+            pd: Population of node 2.
+            d:  The distance between the nodes.
 
         Returns:
-            The probability of migration
+            The probability of migration.
         """
         # If home/dest node has 0 pop, assume this node is the regional work node-- no local migration allowed
         if ph == 0 or pd == 0:
@@ -97,17 +97,16 @@ class StaticGravityModelRatesGenerator(LinkRatesModelGenerator):
 
     def compute_migration(self, df: pd.DataFrame, return_prob_sums: bool=False) -> Union[dict, Tuple[dict, np.ndarray]]:
         """
-        Calculation the migration based on the demographics data + gravity params
+        Calculate the migration based on the demographics data and the gravity parameters.
 
         Args:
-            df: Panads data frame containing the lat, long, grid_id, node_id, and population
-            return_prob_sums: Should we return just the link rates or should be also return
-            the total probability sums as well
+            df: Pandas data frame containing the lat, long, **grid_id**, **node_id**, and population.
+            return_prob_sums: True to return the link rates and the total probability; False to return only the link rates. 
 
         Returns:
-            If return_prob_sums is True it returns a tuple containing the link rates dictionary and then a list of
-            total migration probabilities for each node
-            if return_prob_sums is False it returns the link rates dictionary
+            If **return_prob_sums** is True, it returns a tuple containing the link rates dictionary and then a list of
+            total migration probabilities for each node.
+            If **return_prob_sums** is False, it returns the link rates dictionary.
         """
         migr = {}
 

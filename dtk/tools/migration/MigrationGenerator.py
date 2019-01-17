@@ -10,12 +10,12 @@ from . import visualize_routes
 
 class MigrationGenerator(object):
     """
-    Generate migration headers and binary files for DTK input;
+    Generate migration headers and binary files for EMOD input.
 
-    In a follow up refactor perhaps we should go further and decouple from demographics file;
-    only supply the input relevant for migration; currently done in process_input(self)
+    In a follow up refactor we may decouple from demographics file and
+    only supply the input relevant for migration; currently done in process_input.
     """
-
+    # process_input doesn't appear to be a supported method
     def __init__(self, migration_file_name: str = './migration.bin',
                  migration_type: MigrationTypes = MigrationTypes.local,
                  link_rates_model: LinkRatesModelGenerator = None):
@@ -52,7 +52,7 @@ class MigrationGenerator(object):
 
     def generate_link_rates(self):
         """
-        Calls the link rates model generates. After generation, we ensure all our ids are in INT form as some of the
+        Call the link rates model generates. After generation, we ensure all our IDs are in INT form as some of the
         generators return the dictionaries with float labels.
         
         Returns:
@@ -68,9 +68,10 @@ class MigrationGenerator(object):
 
     def save_migration_header(self, demographics_file_path: str):
         """
-        generate migration header for DTK consumption
+        Generate migration header for EMOD consumption.
+        
         Args:
-            demographics_file_path:
+            demographics_file_path: The path to the demographics file.
 
         Returns:
 
@@ -87,11 +88,12 @@ class MigrationGenerator(object):
     @staticmethod
     def save_migration_visualization(demographics_file_path, migration_header_binary_path, output_dir):
         """
-        visualize nodes and migration routes and save the figure
+        Visualize nodes and migration routes and save the figure.
+
         Args:
-            demographics_file_path:
-            migration_header_binary_path:
-            output_dir:
+            demographics_file_path: The path to the demographics file.
+            migration_header_binary_path: The path to the binary migration file header.
+            output_dir: The directory to save the output.
 
         Returns:
 
@@ -102,15 +104,13 @@ class MigrationGenerator(object):
     def generate_migration(self, save_link_rates_as_txt: bool = False, demographics_file_path: str = None,
                            idRef: str = None):
         """
-        Generation migration binary. 
+        Generate the binary migration file. 
 
         Args:
-            save_link_rates_as_txt: If true, a human-readable text version of the link rates will be saved as either
-             migration_file_name + '.txt' or migration_file_name with .bin replaced with .txt
-            demographics_file_path: If passed, the demographics filed will be compiled and used to generator
-            the migration file header. Use IdReference in demographics file as IdReference for migration json file.
-            idRef: if demographics_file_path is not passed and idRef is passed, use idRef as IdReference for migration
-            json file.
+            save_link_rates_as_txt: If True, a human-readable text version of the link rates is saved as either
+             migration_file_name + '.txt' or migration_file_name with .bin replaced with .txt.
+            demographics_file_path: The path to the demographics file. If passed, the demographics file is compiled and used to generate the migration file header. Uses the IdReference in demographics file as the IdReference for JSON migration file.
+            idRef: If **demographics_file_path** is not passed, use idRef value as the IdReference for the JSON migration file.
         Returns:
             None
         """

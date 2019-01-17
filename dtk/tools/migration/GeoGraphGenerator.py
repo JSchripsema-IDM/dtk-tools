@@ -9,8 +9,8 @@ from dtk.tools.migration.GraphGenerator import GraphGenerator
 
 class GeoGraphGenerator(GraphGenerator):
     """
-    A geographical graph generator (connectivity depends on the distance between nodes);
-    a future refactor may have a number graph generator types implementing a generic interface GraphTopoGenerator
+    A geographical graph generator (connectivity depends on the distance between nodes).
+    A future refactor may have a number graph generator types implementing a generic interface GraphTopoGenerator.
 
     """
 
@@ -18,9 +18,9 @@ class GeoGraphGenerator(GraphGenerator):
         """
 
         Args:
-            migration_network_file_path:  path to migration network file
-            demographics_file_path:
-            migration_radius:
+            migration_network_file_path: The path to migration network file.
+            demographics_file_path: The path to the demographics file.
+            migration_radius: How far people would travel on foot in units of neighborhood hops; 1 is equal to the 8 adjacent nodes, 2 is equal to 24 adjacent nodes.
         """
         super().__init__(migration_network_file_path, demographics_file_path)
         warnings.warn("GeoGraphGenerator is deprecated.", DeprecationWarning)
@@ -29,10 +29,10 @@ class GeoGraphGenerator(GraphGenerator):
 
     def generate_graph(self) -> nx.Graph():
         """
-        generate a networkx graph based on distances between vertices
+        Generate a networkx graph based on distances between vertices.
 
         Returns:
-            A networkx graph
+            A networkx graph.
         """
 
         G = nx.Graph()
@@ -68,10 +68,10 @@ class GeoGraphGenerator(GraphGenerator):
 
     def get_shortest_paths(self):
         """
-        get shortest paths based on link weights
+        Get the shortest paths based on link weights.
 
         Returns:
-
+            Float value of shortest path.
         """
 
         return nx.shortest_path_length(self.graph, weight='weight')
@@ -79,16 +79,16 @@ class GeoGraphGenerator(GraphGenerator):
     @staticmethod
     def get_haversine_distance(lon1, lat1, lon2, lat2) -> float:
         """
-        Calculate the great circle distance between two points on the earth (specified in decimal degrees)
+        Calculate the great circle distance between two points on the earth (specified in decimal degrees).
         
         Args:
-            lon1: Longitude for point 1
-            lat1: Latitude for point 1
-            lon2: Longitude for point 2
-            lat2: Latitude for point 2
+            lon1: Longitude for point 1.
+            lat1: Latitude for point 1.
+            lon2: Longitude for point 2.
+            lat2: Latitude for point 2.
 
         Returns:
-            Float value of haversine distance
+            Float value of haversine distance.
         """
 
         # convert decimal degrees to radians

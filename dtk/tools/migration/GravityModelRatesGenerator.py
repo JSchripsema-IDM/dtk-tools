@@ -9,17 +9,17 @@ from dtk.tools.migration.LinkRatesModelGenerator import GraphGeneratedLinkRatesM
 
 class GravityModelRatesGenerator(GraphGeneratedLinkRatesModelGenerator):
     """
-    generate rates matrix based on source-destination pairs path lengths (path weights) and graph topology input;
-    see MigrationGenerator for path lengths/weights and graph topology generation
+    Generate rates matrix based on source-destination pairs path lengths (path weights) and graph topology input;
+    see :py:class:`~dtk.tools.migration.MigrationGenerator` for path lengths/weights and graph topology generation.
     """
 
     def __init__(self, graph_generator: GraphGenerator, coeff: float = 1e-4):
         """
-        GravityModelRatesGenerator creates a rates matrix based on the graph provided
+        Create a rates matrix based on the graph provided.
 
         Args:
-            graph_generator: A GraphGenerator
-            coeff: Gravity Model coefficient for calculating the mig_rate
+            graph_generator: A :py:class:`~dtk.tools.migration.GraphGenerator` object.
+            coeff: A gravity model coefficient for calculating the **mig_rate**.
         """
         super().__init__(graph_generator)
         warnings.warn("GravityModelRatesGenerator is deprecated.", DeprecationWarning)
@@ -33,9 +33,10 @@ class GravityModelRatesGenerator(GraphGeneratedLinkRatesModelGenerator):
 
     def generate(self) -> dict:
         """
-        Generate the link rates(weighted adjacency list) from the provided graph
+        Generate the link rates(weighted adjacency list) from the provided graph.
+
         Returns:
-            weighted adjacency list calculated via gravity model
+            A weighted adjacency list calculated via gravity model.
         """
         self.graph_generator.generate_graph()
         self.path_lengths = self.graph_generator.get_shortest_paths()
