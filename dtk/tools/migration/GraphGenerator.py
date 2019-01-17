@@ -16,7 +16,7 @@ def generate_node_properties(demographics_file_path: str) -> Tuple[dict, dict]:
         demographics_file_path: The path to the demographics file. 
 
     Returns:
-        The **node_label_2_id** map and **node_properties**.
+        The **node_label_2_id** map and **node_properties** dictionary.
 
     """
     node_label_2_id = {}
@@ -79,7 +79,7 @@ class GraphGenerator(object):
         Generate the graph of the nodes used in migration.
 
         Args:
-            migration_network_file_path: The path to migration network file.
+            migration_network_file_path: The path to the migration network file.
 
             The file should be in the following format::
             
