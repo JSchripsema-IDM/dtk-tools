@@ -3,6 +3,23 @@ from dtk.utils.Campaign.CampaignClass import *
 
 def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=None, duration=180, duration_std_dev=14,
              nodeIDs=None, node_property_restrictions=None):
+    """
+    Add an attractive targeted sugar bait (ATSB) intervention (**SugarTrap** class) using the
+    **StandardInterventionDistributionEventCoordinator**.
+
+    Args:
+        cb: The config builder object.
+        start: The day on which to start distributing the intervention (**Start_Day** parameter).
+        coverage: The proportion of the population that will receive the intervention (**Demographic_Coverage** parameter).
+        kill_cfg: The killing efficacy and waning of ATSB (**Killing_Config** parameter) and species (optional, will be added based on the configuration file if not included).
+        duration: TBD
+        duration_std_dev: TBD
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
+        node_property_restrictions: The NodeProperty key:value pairs that nodes must have to receive the intervention (**Node_Property_Restrictions** parameter).
+
+    Returns:
+        None
+    """
 
     cfg_species = [x for x in cb.get_param('Vector_Species_Names') if cb.get_param('Vector_Species_Params')[x]['Vector_Sugar_Feeding_Frequency'] != 'VECTOR_SUGAR_FEEDING_NONE']
     atsb_master = WaningEffectBoxExponential(Initial_Effect=0.0337*coverage,
@@ -67,6 +84,23 @@ def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=None, duration=180, duration_s
 
 def add_topical_repellent(config_builder, start, coverage_by_ages, cost=0, initial_blocking=0.95, duration=0.3,
                           repetitions=1, interval=1, nodeIDs=[]):
+    """
+    Add a topical insect repellent intervention (**SimpleIndividualRepellent** class) using the **StandardInterventionDistributionEventCoordinator**.
+
+    Args:
+        config_builder: The config builder object.
+        start: The day on which to start distributing the intervention (**Start_Day** parameter).
+        coverage_by_ages: The proportion of the population that will receive the intervention (**Demographic_Coverage** parameter) modified by the minimum and maximum age range (**Target_Age_Min** and **Target_Age_Max** in the event coordinator).
+        cost: The cost of each individual application (**Cost_To_Consumer** parameter).
+        initial_blocking: The initial blocking effect of the repellent (**Initial_Effect** parameter).
+        duration: The duration of the effectiveness (**Box_Duration** parameter with the **WaningEffectBox** class).
+        repetitions: The number of times to repeat the intervention (**Number_Repetitions** parameter).
+        interval: The timesteps between repeated distributions (**Timesteps_Between_Repetitions** parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
+
+    Returns:
+        None
+    """
 
     repellent = {   "class": "SimpleIndividualRepellent",
                     "Event_Name": "Individual Repellent",
@@ -121,6 +155,21 @@ def add_topical_repellent(config_builder, start, coverage_by_ages, cost=0, initi
 
 def add_ors_node(config_builder, start, coverage=1, initial_killing=0.95, duration=30, cost=0,
                  nodeIDs=[]):
+    """
+    Add an outdoor residential spraying intervention (**SpaceSpraying** class) using **NodeEventCoordinator**.
+
+    Args:
+        config_builder: The config builder object.
+        start: The day on which to start distributing the intervention (**Start_Day** parameter).
+        coverage: The proportion of the population that will receive the intervention (**Demographic_Coverage** parameter).
+        initial_killing:  The initial killing effect of the outdoor spraying (**Initial_Effect** parameter).
+        duration: The exponential decay constant of the effectiveness (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
+        cost: The cost of each individual application (**Cost_To_Consumer** parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
+
+    Returns:
+        None
+    """
 
     ors_config = {  "Reduction_Config": {
                         "Decay_Time_Constant": 365, 
@@ -159,6 +208,23 @@ def add_ors_node(config_builder, start, coverage=1, initial_killing=0.95, durati
 def add_larvicide(config_builder, start, coverage=1, initial_killing=1.0, duration=30, cost=0,
                   habitat_target="ALL_HABITATS", nodeIDs=[]):
 
+    """
+    Add a larvicide intervention (**Larvicides** class).
+
+    Args:
+        config_builder: The config builder object.
+        start: The day on which to start distributing the intervention (**Start_Day** parameter).
+        coverage: The proportion of the population that will receive the intervention (**Demographic_Coverage** parameter).
+        initial_killing:  The initial killing effect of the larvicide (**Initial_Effect** parameter).
+        duration: The exponential decay constant of the effectiveness (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
+        cost: The cost of each individual application (**Cost_To_Consumer** parameter).
+        habitat_target: The larval habitat to target (**Habitat_Target** parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
+
+    Returns:
+        None
+    """
+
     larvicide_config = {  "Blocking_Config": {
                         "Decay_Time_Constant": 365, 
                         "Initial_Effect": 0, 
@@ -195,6 +261,24 @@ def add_larvicide(config_builder, start, coverage=1, initial_killing=1.0, durati
 def add_eave_tubes(config_builder, start, coverage=1, initial_killing=1.0, killing_duration=180, 
                    initial_blocking=1.0, blocking_duration=730, outdoor_killing_discount=0.3, cost=0,
                    nodeIDs=[]):
+    """
+    Add insecticidal tubes to the eaves of houses (**IRSHousingModification** intervention class).
+
+    Args:
+        config_builder: The config builder object.
+        start: The day on which to start distributing the intervention (**Start_Day** parameter).
+        coverage: The proportion of the population that will receive the intervention (**Demographic_Coverage** parameter).
+        initial_killing:  The initial killing effect of the eave tubes (**Initial_Effect** parameter in **Killing_Config**).
+        killing_duration: The exponential decay constant of the effectiveness (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
+        initial_blocking:  The initial blocking effect of the eave tubes (**Initial_Effect** parameter in **Blocking_Config**).
+        blocking_duration: The exponential decay constant of the effectiveness (**Decay_Time_Constant** parameter with the **WaningEffectExponential** class).
+        outdoor_killing_discount:
+        cost: The cost of each individual application (**Cost_To_Consumer** parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List** parameter). If not provided, set value of NodeSetAll.
+
+    Returns:
+        None
+    """
 
     indoor_config = {   "class": "IRSHousingModification",
                         "Killing_Config": {
