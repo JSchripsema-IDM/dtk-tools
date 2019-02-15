@@ -43,7 +43,7 @@ def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=0, nodeIDs=
             "BitingRisk":"High"}, {"IsCool":"Yes}]``.
         node_property_restrictions: The NodeProperty key:value pairs that
             nodes must have to receive the intervention (**Node_Property_Restrictions**
-            parameter). In the format ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``
+            parameter). In the format ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``.
         triggered_campaign_delay: After the trigger is received, the number of
             time steps until the campaign starts. Eligibility of people or nodes
             for the campaign is evaluated on the start day, not the triggered
@@ -54,7 +54,7 @@ def add_ITN(config_builder, start, coverage_by_ages, waning={}, cost=0, nodeIDs=
             configure birth-triggered ITN (use **coverage_by_ages** instead).
         listening_duration: The number of time steps that the distributed
             event will monitor for triggers. Default is -1, which is indefinitely.
-    
+
     Returns:
         None
     """

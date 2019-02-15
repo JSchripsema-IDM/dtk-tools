@@ -18,9 +18,19 @@ receiving_IV_event = BroadcastEvent(Broadcast_Event="Received_Ivermectin")
 
 def ivermectin_config_by_duration(drug_code=None):
     """
-    Returns the correct ``Killing_Config`` parameter depending on the ``drug_code``
-    :param drug_code: Can be ``'DAY'``, ``'WEEK'`` or ``'MONTH'`` or a number of days and drive the ``Killing_config`` (see `Killing_Config in Ivermectin <https://institutefordiseasemodeling.github.io/EMOD/malaria/parameter-campaign.html#iv-ivermectin>`_ for more info).
-    :return: a dictionary with the correct ``Killing_Config / Box_Duration`` set.
+    Provide the duration of ivermectin efficacy and return the correct
+    **Killing_Config** dictionary using the **WaningEffectBox** class.
+
+    Args:
+        drug_code: The duration of drug efficacy. Supported values are:
+
+            * DAY
+            * WEEK
+            * MONTH
+            * XDAYS where "X" is an integer.
+
+    Returns:
+         A dictionary with the correct **Killing_Config** and box duration set.
     """
 
     if not drug_code:
@@ -50,15 +60,50 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days,
                    trigger_condition_list=None, triggered_campaign_delay=0,
                    listening_duration=-1, nodeids=None, target_residents_only=1,
                    node_property_restrictions=None, ind_property_restrictions=None):
+
     """
-    Add an ivermectin event to the config_builder passed.
-    :param config_builder: The config builder getting the intervention event
-    :param drug_code: Can be 'DAY', 'WEEK' or 'MONTH' and drive the ``Killing_config`` (see `Killing_Config in Ivermectin <https://institutefordiseasemodeling.github.io/EMOD/malaria/parameter-campaign.html#iv-ivermectin>`_ for more info).
-    :param coverage: Set the ``Demographic_Coverage``
-    :param start_days: list of days when to start the ivermectin distribution
-    :param trigger_condition_list: ivermectin will be distributed when it hears the trigger string event, please note the start_days then is used to distribute the NodeLevelHealthTriggeredIV
-    :param listening_duration: for how long the NLHTIV will listen for the trigger
-    :return: Nothing
+    Add an ivermectin intervention to the campaign using the **Ivermectin**
+    class.
+
+    Args:
+        config_builder: The :py:class:`DTKConfigBuilder
+            <dtk.utils.core.DTKConfigBuilder>` containing the campaign
+            configuration.
+        drug_code: The duration of drug efficacy. Supported values are:
+
+            * DAY
+            * WEEK
+            * MONTH
+            * XDAYS where "X" is an integer.
+        coverage: The proportion of the population covered by the intervention
+            (**Demographic_Coverage** parameter).
+        start_days: A list of days when ivermectin is distributed
+            (**Start_Day** parameter).
+        trigger_condition_list: A list of the events that will
+            trigger the ivermectin intervention. If included, **start_days** is
+            then used to distribute **NodeLevelHealthTriggeredIV**.
+        triggered_campaign_delay: After the trigger is received, the number of
+            time steps until distribution starts. Eligibility of people or nodes
+            for the campaign is evaluated on the start day, not the triggered
+            day.
+        listening_duration: The number of time steps that the distributed
+            event will monitor for triggers. Default is -1, which is
+            indefinitely.
+        target_residents_only: Set to 1 to target only residents of the node;
+            set to 0 to target all individuals, including those who are
+            traveling.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention
+            (**Node_Property_Restrictions** parameter). In the format
+            ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``.
+        ind_property_restrictions: The IndividualProperty key:value pairs
+            that individuals must have to receive the intervention
+            (**Property_Restrictions_Within_Node** parameter). In the format
+            ``[{"BitingRisk":"High"}, {"IsCool":"Yes}]``.
+
+    Returns:
+        None
+
     """
 
     if node_property_restrictions is None:

@@ -14,6 +14,63 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
                         ind_property_restrictions=[], node_property_restrictions=[], triggered_campaign_delay=0,
                         trigger_condition_list=[], listening_duration=-1):
 
+    """
+    Add a migration event to a campaign that moves individuals from one node
+    to another using the **MigrationIndividuals** class.
+
+    Args:
+        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        nodeto: The NodeID that the individuals will travel to.
+        start_days: A list of days when ivermectin is distributed
+            (**Start_Day** parameter).
+        coverage: The proportion of the population covered by the intervention
+            (**Demographic_Coverage** parameter).
+        repetitions: The number of times to repeat the intervention
+            (**Number_Repetitions** parameter).
+        tsteps_btwn: The number of time steps between repetitions.
+        duration_at_node_distr_type: The distribution type to draw from for
+            determining the time spent at the destination node.
+        duration_of_stay: The first parameter defining the distribution for
+            duration of stay, the meaning of which depends upon the distribution
+            type.
+        duration_of_stay_2: The second parameter defining the distribution for
+            duration of stay, the meaning of which depends upon the distribution
+            type.
+        duration_before_leaving_distr_type: The distribution type to draw from
+            for determining the time spent waiting at the starting node before
+            traveling to the destination node.
+        duration_before_leaving: The first parameter defining the distribution
+            for waiting time, the meaning of which depends upon the distribution
+            type.
+        duration_before_leaving_2: The second parameter defining the
+            distribution for waiting time, the meaning of which depends upon
+            the distribution type.
+        target: The individuals targeted b
+        nodesfrom: The dictionary definition the nodes that individuals will
+            migrate from (**Nodeset_Config**parameter).
+        ind_property_restrictions: The IndividualProperty key:value pairs
+            that individuals must have to receive the intervention
+            (**Property_Restrictions_Within_Node** parameter). In the format
+            ``[{"BitingRisk":"High"}, {"IsCool":"Yes}]``.
+        node_property_restrictions: The NodeProperty key:value pairs that
+            nodes must have to receive the intervention
+            (**Node_Property_Restrictions** parameter). In the format
+            ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``.
+        triggered_campaign_delay: After the trigger is received, the number of
+            time steps until distribution starts. Eligibility of people or nodes
+            for the campaign is evaluated on the start day, not the triggered
+            day.
+        trigger_condition_list: A list of the events that will
+            trigger the ivermectin intervention. If included, **start_days** is
+            then used to distribute **NodeLevelHealthTriggeredIV**.
+        listening_duration: The number of time steps that the distributed
+            event will monitor for triggers. Default is -1, which is
+            indefinitely.
+
+    Returns:
+        None
+    """
     migration_event = MigrateIndividuals(
         NodeID_To_Migrate_To=nodeto,
         Is_Moving=False
@@ -88,6 +145,34 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
 
 def update_duration_type(migration_event, duration_at_node_distr_type, dur_param_1=0, dur_param_2=0, leaving_or_at='at') :
 
+    """
+    Update the distribution type that determines the length of time that each
+    individual waits before migration or stays at the destination node. The
+    assigned value for each individual is randomly drawn from the distribution.
+
+    Args:
+        migration_event: The **MigrateIndividuals** migration event to be
+            updated.
+        duration_at_node_distr_type: The distribution type to draw from for
+            determining the duration of time spent at the starting or
+            destination node.
+        dur_param_1: The first parameter defining the distribution for
+            duration of stay, the meaning of which depends upon the distribution
+            type.
+        dur_param_2: The second parameter defining the distribution for
+            duration of stay, the meaning of which depends upon the distribution
+            type.
+        leaving_or_at: The portion of the trip that is updated. Accepted
+            values are:
+
+            leaving
+                The time spent waiting at the starting node before leaving.
+            at
+                The time spent at the destination node.
+
+    Returns:
+        The updated migration event.
+    """
     if leaving_or_at == 'leaving':
         trip_end = 'Before_Leaving'
         MigrateFamily_Duration_Enum = MigrateIndividuals_Duration_Before_Leaving_Distribution_Type_Enum
