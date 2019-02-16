@@ -13,7 +13,8 @@ def add_InputEIR(cb, monthlyEIRs, age_dependence="SURFACE_AREA_DEPENDENT", start
         cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
             containing the campaign parameters.
         monthlyEIRs: A list of monthly EIRs (must contain 12 items).
-        age_dependence: "LINEAR" or "SURFACE_AREA_DEPENDENT"
+        age_dependence: The effect of EIR based on age. Accepted
+        values are LINEAR or SURFACE_AREA_DEPENDENT.
         start_day: The day to distribute new infections (**Start_Day**
             parameter).
         nodeIDs: The list of nodes to apply this intervention to (**Node_List**

@@ -4,12 +4,19 @@ def add_mosquito_release(cb, start_day, species, number=100, repetitions=-1, tst
                          released_genome=[['X', 'X']], released_wolbachia="VECTOR_WOLBACHIA_FREE",
                          nodes={"class": "NodeSetAll"}):
     """
-    Function to add recurring introduction of new new vectors
+    Add repeated mosquito release events to the campaign using the
+    **MosquitoRelease** class.
 
-    :param cb: Configuration builder holding the interventions
-    :param repetitions: Number of repetitions
-    :param tsteps_btwn:  Timesteps between repetitions
-    :param start_day: Start day for the first release
+    Args:
+        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        repetitions: The number of times to repeat the intervention
+            (**Number_Repetitions** parameter).
+        tsteps_btwn:  The number of time steps between repetitions.
+        start_day: The day of the first release (**Start_Day** parameter).
+
+    Returns:
+        None
     """
     release_event = { "class" : "CampaignEvent",
                       "Event_Name" : "Mosquito Release",

@@ -4,6 +4,26 @@ from dtk.utils.Campaign.CampaignEnum import *
 
 # Add dengue outbreak individual event
 def add_OutbreakIndividualDengue(config_builder, start, coverage_by_age, strain_id_name, nodeIDs=[]):
+    """
+    Add recurring introduction of new dengue infections to the campaign using
+    the **OutbreakIndividualDengue** class.
+
+    Args:
+        config_builder: The The :py:class:`DTKConfigBuilder
+            <dtk.utils.core.DTKConfigBuilder>` containing the campaign
+            configuration.
+        start: The day on which to start distributing the intervention
+            (**Start_Day** parameter).
+        coverage_by_age: The age range of the individuals to target with
+            the intervention age, provide a dictionary of ``{'agemin' : x,
+            'agemax' : y}``. Default is targeting everyone.
+        strain_id_name: The name of the dengue strain.
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, set value of NodeSetAll.
+
+    Returns:
+        None
+    """
     dengue_event = CampaignEvent(
         Start_Day=int(start),
         Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(

@@ -205,7 +205,7 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
         box_duration: For "box" waning effects, the number of time steps
             until the efficacy of the intervention begins to decay.
         waning_effect_type: The way in which IRS efficacy decays (see Waning
-        Effect classes).
+            Effect classes).
         cost: The per-unit cost (**Cost_To_Consumer** parameter).
         irs_ineligibility_duration: The number of time steps after a node is
             sprayed before it is eligible for another round of IRS.

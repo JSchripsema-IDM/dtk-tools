@@ -46,9 +46,11 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
         duration_before_leaving_2: The second parameter defining the
             distribution for waiting time, the meaning of which depends upon
             the distribution type.
-        target: The individuals targeted b
+        target: The individuals to target with the intervention. To
+            restrict by age, provide a dictionary of {'agemin' : x, 'agemax' :
+            y}. Default is targeting everyone.
         nodesfrom: The dictionary definition the nodes that individuals will
-            migrate from (**Nodeset_Config**parameter).
+            migrate from (**Nodeset_Config** parameter).
         ind_property_restrictions: The IndividualProperty key:value pairs
             that individuals must have to receive the intervention
             (**Property_Restrictions_Within_Node** parameter). In the format

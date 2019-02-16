@@ -3,16 +3,29 @@ from dtk.utils.Campaign.CampaignClass import *
 
 def recurring_outbreak(cb, outbreak_fraction=0.01, repetitions=-1, tsteps_btwn=365, target='Everyone', start_day=0, strain=(0,0), nodes={"class": "NodeSetAll"}, outbreak_source="PrevalenceIncrease"):
     """
-    Function to add recurring introduction of new infections to the current configuration builder
+    Add recurring introduction of new infections to the campaign using the
+    **OutbreakIndividual** class.
 
-    :param cb: Configuration builder holding the interventions
-    :param outbreak_fraction: Fraction of people getting infected by the outbreak
-    :param repetitions: Number of repetitions
-    :param tsteps_btwn:  Timesteps between repetitions
-    :param target: Target demographic. Default is 'Everyone'
-    :param start_day: Start day for the outbreak
-    :param strain: Needs to be defined as (Antigen,Genome)
-    :return: A dictionary holding the fraction and the timesteps between events
+    Args:
+        cb: The The :py:class:`DTKConfigBuilder
+            <dtk.utils.core.DTKConfigBuilder>` containing the campaign
+            configuration.
+        outbreak_fraction: The fraction of people infected by the outbreak (
+            **Demographic_Coverage** parameter).
+        repetitions: The number of times to repeat the intervention.
+        tsteps_btwn_:  The number of time steps between repetitions.
+        target: The individuals to target with the intervention. To
+            restrict by age, provide a dictionary of {'agemin' : x, 'agemax' :
+            y}. Default is targeting everyone.
+        start_day: The day on which to start distributing the intervention
+            (**Start_Day** parameter).
+        strain: A two-element tuple defining (Antigen, Genome).
+        nodes: A dictionary defining the nodes to apply this intervention to
+            (**Nodeset_Config** parameter).
+        outbreak_source: The source of the outbreak.
+
+    Returns:
+        A dictionary holding the fraction and the time steps between events.
     """
 
 

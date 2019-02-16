@@ -15,34 +15,57 @@ def change_biting_risk(cb, start_day=0,
                        ind_property_restrictions=[]
                        ):
     """
-    Add an intervention to change individual biting risk as defined by the parameters to the config builder.
+    Add an intervention to change individual biting risk in a campaign using the
+    **BitingRisk** class.
 
     Args:
 
-      cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` that will receive the risk-changing intervention.
-      start_day: The date on which to change biting risk.
-      risk_config: The risk distribution type and distribution parameters defining the distribution from which biting
-        risk will be drawn. Currently, Risk_Distribution_Type is allowed.
+        cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            that contains the campaign configuration.
+        start_day: The day on which to start distributing the intervention
+            (**Start_Day** parameter).
+        risk_config: A dictionary containing the risk distribution type and
+            distribution parameters that define the distribution from which
+            biting risk will be drawn. Assign one of the following to
+            **Risk_Distribution_Type**:
         
-          FIXED_DURATION
-            Parameter: Constant
-          UNIFORM_DURATION
-            Parameters Uniform_Min, Uniform_Max
-          GAUSSIAN_DURATION
-            Parameters Gaussian_Mean, Gaussian_Std_Dev
-          EXPONENTIAL_DURATION
-            Parameter Exponential_Mean
-      coverage: The demographic coverage of the distribution.
-      repetitions: The number of repetitions.
-      tsteps_btwn_repetitions: The number of timesteps between repetitions.
-      target_group: The group to target. To restrict by age, dict of {'agemin' : x, 'agemax' : y}. Default is targeting everyone.
-      trigger: For triggered changes, the trigger for changing risk. Can be "Birth" or any other trigger string.
-      triggered_biting_risk_duration: For triggered changes, the duration after start_day over which triggered risk-changing will happen. Default is forever.
-      nodeIDs: The list of node IDs; if empty, defaults to all nodes.
-      ind_property_restrictions: The individual property values to target; used with Property_Restrictions_Within_Node. For example, ``[{ "IndividualProperty1" : "PropertyValue1" }, {'IndividualProperty2': "PropertyValue2"}, ...]``
-      node_property_restrictions: The node property values to target; used with NodePropertyRestrictions. For example, ``[{ "NodeProperty1" : "PropertyValue1" }, {'NodeProperty2': "PropertyValue2"}, ...]``
+            FIXED_DURATION
+                Parameter: **Constant**
+            UNIFORM_DURATION
+                Parameters: **Uniform_Min**, **Uniform_Max**
+            GAUSSIAN_DURATION
+                Parameters: **Gaussian_Mean**, **Gaussian_Std_Dev**
+            EXPONENTIAL_DURATION
+                Parameter: **Exponential_Mean**
+        coverage: The proportion of the population that will receive the
+            intervention (**Demographic_Coverage** parameter).
+        repetitions: The number of times to repeat the intervention.
+        tsteps_btwn_repetitions:  The number of time steps between repetitions.
+        target_group: The individuals to target with the intervention. To
+            restrict by age, provide a dictionary of ``{'agemin' : x, 'agemax' :
+            y}``. Default is targeting everyone.
+        trigger: A list of the events that will trigger the biting risk
+            intervention. If included, **start_day** is the day when
+            monitoring for triggers begins.
+        triggered_biting_risk_duration: For triggered changes, the duration
+            after **start_day** over which triggered risk-changing will happen.
+            Default is indefinitely.
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, set value of NodeSetAll.
+        ind_property_restrictions: The IndividualProperty key:value pairs to
+            target (**Property_Restrictions_Within_Node** parameter). In the
+            format ``[{"IndividualProperty1" : "PropertyValue1"},
+            {'IndividualProperty2': "PropertyValue2"}, ...]``
+        node_property_restrictions:The NodeProperty key:value pairs that
+            nodes must have to receive the intervention
+            (**Node_Property_Restrictions** parameter). In the format
+            ``[{"NodeProperty1" : "PropertyValue1"}, {'NodeProperty2': "PropertyValue2"}, ...]``
 
-    .. note:: NewPropertyValue and DisqualifyingProperties have not been implemented with this intervention, though they could be useful.
+        .. note:: **NewPropertyValue** and **DisqualifyingProperties** have not
+            been implemented with this intervention.
+
+    Returns:
+        None
     """
 
     risk_config = BitingRisk(**risk_config)
