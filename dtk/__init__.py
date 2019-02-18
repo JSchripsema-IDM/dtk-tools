@@ -3,3 +3,5 @@ __all__ = ['generic',
            'tools',
            'utils',
            'vector']
+
+__version__ = 'v1.0.0'

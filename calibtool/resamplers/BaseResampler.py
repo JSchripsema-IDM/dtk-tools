@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from itertools import zip_longest
 import os
 from simtools.Analysis.AnalyzeManager import AnalyzeManager
 from simtools.ExperimentManager.ExperimentManagerFactory import ExperimentManagerFactory
@@ -63,9 +64,12 @@ class BaseResampler(metaclass=ABCMeta):
         am = AnalyzeManager(analyzers=analyzers, exp_list=experiment)
         am.analyze()
 
-        # The provided likelihood analyzer MUST set self.result to be a list of Point objects
-        # with the .likelihood attribute set to the likelihood value in its .finalize() method.
-        results = am.analyzers[0].result.tolist()
+        # compute a single likelihood value from all of the analyzers on a per-simulation basis
+        result_tuples = zip_longest(*[analyzer.results for analyzer in am.analyzers])
+        try:
+            results = [sum(tup) for tup in result_tuples]
+        except TypeError as e:  # if 1+ None values snuck in...
+            raise type(e)('All analyzers must contain one result per simulation. The result list lengths do not match.')
 
         for i in range(len(results)):
             # Add the likelihood

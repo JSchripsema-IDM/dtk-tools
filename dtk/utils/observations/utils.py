@@ -65,7 +65,7 @@ def parse_ingest_data_from_xlsm(filename):
 
     channels = []
     for channel_name, scaling in obs_metadata['scale_population'].items():
-        channel_type = 'count' if scaling is True else 'fraction' # ck4, this is ugly, should rework this & the analyzer use of Channel object
+        channel_type = 'count' if scaling else 'fraction' # ck4, this is ugly, should rework this & the analyzer use of Channel object
         channels.append(Channel(name=channel_name, type=channel_type))
 
     return params, site_info, reference, analyzers, channels
@@ -190,7 +190,7 @@ def _parse_analyzers(wb, wb_path):
             'weight': weights[i]
         }
         if age_bins[i] == CUSTOM_AGE_BINS:
-            analyzer_dict['age_bins'] = custom_age_bins[i].split(',')
+            analyzer_dict['age_bins'] = custom_age_bins[i].split(',') if custom_age_bins[i] else None
         elif age_bins[i] == ALL_MATCHING_AGE_BINS:
             analyzer_dict['age_bins'] = AgeBin.ALL
         else:
@@ -216,7 +216,7 @@ def _parse_analyzers(wb, wb_path):
 def _parse_reference_data(wb, wb_path):
     defined_names = excel.DefinedName.load_from_workbook(wb)
 
-    # temp_dir = 'temp_dir'
+    observations = set()
     stratifiers = set()
     with tempfile.TemporaryDirectory() as temp_dir:
         os.makedirs(temp_dir, exist_ok=True)
@@ -224,6 +224,10 @@ def _parse_reference_data(wb, wb_path):
         obs_sheets = [sn for sn in wb.sheetnames if OBS_SHEET_REGEX.match(sn)]
         for sheet_name in obs_sheets:
             ws = get_sheet_from_workbook(wb, sheet_name=sheet_name, wb_path=wb_path)
+
+            # Get the channel name and add it to the observations
+            channel_name = excel.read_block(ws=ws, range=defined_names[sheet_name]["channel_name"])[0][0]
+            observations.add(channel_name)
 
             # detect stratifiers for this channel
             sheet_stratifiers = excel.read_list(ws=ws, range=defined_names[sheet_name]['stratifiers'])
@@ -273,4 +277,5 @@ def _parse_reference_data(wb, wb_path):
             with open(obs_path, 'w') as f:
                 f.write(csv_data_string)
         reference = PopulationObs.from_directory(directory=temp_dir, stratifiers=list(stratifiers))
+        reference.observations = observations
     return reference

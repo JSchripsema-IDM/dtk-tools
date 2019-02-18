@@ -88,7 +88,7 @@ class TestCalibrationIngest(unittest.TestCase):
         from dtk.utils.observations.BetaDistribution import BetaDistribution
 
         filename = os.path.join(self.data_directory, 'properly_filled.xlsm')
-        params, site_info, reference, analyzers = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
+        params, site_info, reference, analyzers, channels = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
 
         # check site info
         expected = {
@@ -211,7 +211,7 @@ class TestCalibrationIngest(unittest.TestCase):
 
     def test_obs_data_specified_and_default_weights_are_correctly_parsed(self):
         filename = os.path.join(self.data_directory, 'obs_data_correct_and_default_weight_column_values.xlsm')
-        params, site_info, reference, analyzers = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
+        params, site_info, reference, analyzers, channels = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
 
         # now check reference data for correctness of obs weights
         expected = {
@@ -247,7 +247,7 @@ class TestCalibrationIngest(unittest.TestCase):
 
     def test_site_info_valid_data_parsed(self):
         filename = os.path.join(self.data_directory, 'site_info_valid_data.xlsm')
-        params, site_info, reference, analyzers = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
+        params, site_info, reference, analyzers, channels = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
 
         expected = {
             'site_name': 'Chile',
@@ -259,6 +259,21 @@ class TestCalibrationIngest(unittest.TestCase):
         for k, expected_value in expected.items():
             self.assertEqual(site_info[k], expected_value)
         self.result = True
+
+    def test_missing_tuples(self):
+        filename = os.path.join(self.data_directory, 'obs_data_correct_and_default_weight_column_values.xlsm')
+        _, _, reference, _, _ = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
+        self.assertFalse(reference.find_missing_tuples(reference, value_column_base="Prevalence"))
+
+        filename = os.path.join(self.data_directory, 'obs_data_correct_and_default_weight_column_values.xlsm')
+        _, _, reference, _, _ = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
+
+        filename = os.path.join(self.data_directory, 'obs_data_missing_rows_and_default_weight_column_values.xlsm')
+        _, _, reference_missing, _, _ = ingest_utils.parse_ingest_data_from_xlsm(filename=filename)
+
+        self.assertEqual(len(reference.find_missing_tuples(reference_missing, value_column_base="Incidence")), 1)
+        self.assertEqual(len(reference.find_missing_tuples(reference_missing, value_column_base="Prevalence")), 2)
+
 
 
 if __name__ == '__main__':

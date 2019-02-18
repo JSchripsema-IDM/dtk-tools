@@ -1,10 +1,12 @@
 import logging
+import math
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from scipy.stats import norm
 
+from scipy.special import gammaln  # for calculation of mu_r
 from calibtool.algorithms.NextPointAlgorithm import NextPointAlgorithm
 
 logging.basicConfig(format='%(message)s', level=logging.INFO)
@@ -435,3 +437,9 @@ class OptimTool(NextPointAlgorithm):
 
     def get_param_names(self):
         return [p['Name'] for p in self.params]
+
+    @staticmethod
+    def get_r(num_params, volume_fraction):
+        r = math.exp(1 / float(num_params) * (
+                    math.log(volume_fraction) - gammaln(num_params / 2. + 1) + num_params / 2. * math.log(math.pi)))
+        return r

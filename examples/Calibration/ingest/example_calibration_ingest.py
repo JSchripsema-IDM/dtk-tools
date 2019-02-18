@@ -165,7 +165,7 @@ def map_sample_to_model_input(config_builder, s):
 # Compute hypersphere radius as a function of the number of dynamic parameters
 volume_fraction = 0.1   # fraction of N-sphere area to unit cube area for numerical derivative (automatic radius scaling with N)
 num_params = len( [p for p in params if p['Dynamic']] )
-r = math.exp( 1/float(num_params)*( math.log(volume_fraction) + gammaln(num_params/2.+1) - num_params/2.*math.log(math.pi) ) )
+r = OptimTool.get_r(num_params, volume_fraction)
 
 # Check, here's the formula for the volume of a N-sphere
 computed_volume_fraction = math.exp( num_params/2.* math.log( math.pi ) - gammaln(num_params/2.+1) + num_params*math.log(r))

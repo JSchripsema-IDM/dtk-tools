@@ -151,7 +151,7 @@ def map_sample_to_model_input(cb, sample):
 # Just for fun, let the numerical derivative baseline scale with the number of dimensions
 volume_fraction = 0.05   # desired fraction of N-sphere area to unit cube area for numerical derivative (automatic radius scaling with N)
 num_params = len([p for p in params if p['Dynamic']])
-r = math.exp(1/float(num_params)*(math.log(volume_fraction) + gammaln(num_params/2.+1) - num_params/2.*math.log(math.pi)))
+r = OptimTool.get_r(num_params, volume_fraction)
 
 optimtool = OptimTool(params,
     constrain_sample,   # <-- WILL NOT BE SAVED IN ITERATION STATE

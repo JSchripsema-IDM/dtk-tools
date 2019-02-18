@@ -246,13 +246,16 @@ class IterationState:
 
         if not self.exp_manager:
             self.exp_manager = ExperimentManagerFactory.from_experiment(self.experiment_id)
-
+        
         analyzerManager = AnalyzeManager(exp_list=self.exp_manager.experiment,
                                          analyzers=self.analyzer_list,
                                          working_dir=self.iteration_directory,
-                                         verbose=True)
+                                         verbose=True,
+                                         force_manager_working_directory=True)
 
-        analyzerManager.analyze()
+        if not analyzerManager.analyze():
+            print("Error encountered during analysis... Exiting")
+            exit()
 
         # Ask the analyzers to cache themselves
         cached_analyses = {a.uid: a.cache() if callable(a.cache) else {} for a in analyzerManager.analyzers}

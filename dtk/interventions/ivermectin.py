@@ -6,17 +6,17 @@ from dtk.interventions.triggered_campaign_delay_event import triggered_campaign_
 # Ivermectin parameters
 ivermectin_cfg = Ivermectin(
     Killing_Config=WaningEffectBox(
-        Box_Duration=1,
+        Box_Duration=7,
         Initial_Effect=0.95
     ),
-    Cost_To_Consumer=15.0
+    Cost_To_Consumer=1.0
 )
 
 # set up events to broadcast when receiving campaign drug
 receiving_IV_event = BroadcastEvent(Broadcast_Event="Received_Ivermectin")
 
 
-def ivermectin_config_by_duration(drug_code=None):
+def ivermectin_config_by_duration(box_duration='WEEK', initial_effect: float=0.95):
     """
     Provide the duration of ivermectin efficacy and return the correct
     **Killing_Config** dictionary using the **WaningEffectBox** class.
@@ -28,32 +28,36 @@ def ivermectin_config_by_duration(drug_code=None):
             * WEEK
             * MONTH
             * XDAYS where "X" is an integer.
+        initial_effect: The initial efficacy of the drug treatment.
 
     Returns:
-         A dictionary with the correct **Killing_Config** and box duration set.
+        A dictionary of ivermectin configuration with the **Box_Duration**
+        set to the **drug_code** parameter.
     """
 
-    if not drug_code:
-        return {}
     cfg = copy.deepcopy(ivermectin_cfg)
-    if isinstance(drug_code, str):
-        if drug_code == 'DAY':
+    if isinstance(box_duration, str):
+        if box_duration == 'DAY':
             cfg.Killing_Config.Box_Duration = 1
-        elif drug_code == 'WEEK':
+        elif box_duration == 'WEEK':
             cfg.Killing_Config.Box_Duration = 7
-        elif drug_code == 'MONTH':
+        elif box_duration == 'MONTH':
             cfg.Killing_Config.Box_Duration = 30
-        elif drug_code == '90DAYS':
+        elif box_duration == '90DAYS':
             cfg.Killing_Config.Box_Duration = 90
         else:
-            raise Exception("Don't recognize drug_code" % drug_code)
-    elif isinstance(drug_code, (int, float)):
-        cfg.Killing_Config.Box_Duration = drug_code
+            raise ValueError("Don't recognize box_duration : {} \nPlease pass in 'DAY','WEEK','MONTH', or"
+                             " '90DAYS'\n".format(box_duration))
+    elif isinstance(box_duration, (int, float)):
+        cfg.Killing_Config.Box_Duration = box_duration
     else:
-        raise Exception("Drug code should be the IVM duration in days or a string like 'DAY', 'WEEK', 'MONTH'")
+        raise ValueError("Please pass in a valid drug code.\nOptions: Sting - 'DAY','WEKK','MONTH', or "
+                         "'90DAYS'.\nInt or Float of number of days for the Box_Duration.\n")
+
+    cfg.Killing_Config.Initial_Effect = initial_effect
+
 
     return cfg
-
 
 
 def add_ivermectin(config_builder, drug_code, coverage, start_days,
@@ -89,8 +93,9 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days,
         listening_duration: The number of time steps that the distributed
             event will monitor for triggers. Default is -1, which is
             indefinitely.
-        target_residents_only: Set to 1 to target only residents of the node;
-            set to 0 to target all individuals, including those who are
+        target_residents_only: Set to 1 to target only individuals
+            who started the simulation in this node and are still in
+            this node; set to 0 to target all individuals, including those who are
             traveling.
         node_property_restrictions: The NodeProperty key:value pairs that
             nodes must have to receive the intervention
@@ -110,49 +115,78 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days,
         node_property_restrictions = []
     if ind_property_restrictions is None:
         ind_property_restrictions = []
-
-
-    cfg = ivermectin_config_by_duration(drug_code)
-
-    cfg = [cfg] + [receiving_IV_event]
-
-    intervention_cfg = MultiInterventionDistributor(Intervention_List=cfg)
-
-    if triggered_campaign_delay > 0:
-        trigger_condition_list = [triggered_campaign_delay_event(config_builder, start_days[0],
-                                                                 nodeIDs=nodeids,
-                                                                 triggered_campaign_delay=triggered_campaign_delay,
-                                                                 trigger_condition_list=trigger_condition_list,
-                                                                 listening_duration=listening_duration,
-                                                                 node_property_restrictions=node_property_restrictions)]
-
-    if nodeids:
-        node_cfg = NodeSetNodeList(Node_List=nodeids)
+    if not start_days:
+        start_days = [0]
+    if nodeIDs:
+        node_cfg = NodeSetNodeList(Node_List=nodeIDs)
     else:
         node_cfg = NodeSetAll()
 
-    for start_day in start_days:
-        IVM_event = CampaignEvent(
-            Start_Day=start_day,
-            Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(),
-            Nodeset_Config=node_cfg
+    cfg = [ivermectin_config_by_duration(box_duration, initial_effect), receiving_IV_event]
+    intervention_cfg = MultiInterventionDistributor(Intervention_List=cfg)
+
+    if triggered_campaign_delay > 0:
+        if not trigger_condition_list:
+            raise Exception("When using triggered_campaign_delay, please specify triggered_condition_list, too.\n")
+        trigger_condition_list = [triggered_campaign_delay_event(config_builder, start_days[0],
+                                                                 nodeIDs=nodeIDs,
+                                                                 triggered_campaign_delay=triggered_campaign_delay,
+                                                                 trigger_condition_list=trigger_condition_list,
+                                                                 listening_duration=listening_duration,
+                                                                 ind_property_restrictions=ind_property_restrictions,
+                                                                 node_property_restrictions=node_property_restrictions)]
+
+    gender = "All"
+    age_min = 0
+    age_max = 3.40282e+38
+    if target_group != "Everyone" and isinstance(target_group, dict):
+        try:
+            age_min = target_group["agemin"]
+            age_max = target_group["agemax"]
+            if 'gender' in target_group:
+                gender = target_group["gender"]
+                target_group = "ExplicitAgeRangesAndGender"
+            else:
+                target_group = "ExplicitAgeRanges"
+        except KeyError:
+            raise KeyError("Unknown target_group parameter. Please pass in 'Everyone' or a dictionary of "
+                             "{'agemin' : x, 'agemax' : y, 'gender': 'Female'} to target  to individuals between x and "
+                             "y years of age, and (optional) gender.\n")
+
+    if trigger_condition_list:
+        ivm_event = CampaignEvent(
+                    Start_Day=start_days[0],
+                    Nodeset_Config=node_cfg,
+                    Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+                        Intervention_Config=NodeLevelHealthTriggeredIV(
+                            Trigger_Condition_List=trigger_condition_list,
+                            Target_Residents_Only=target_residents_only,
+                            Property_Restrictions_Within_Node=ind_property_restrictions,
+                            Node_Property_Restrictions=node_property_restrictions,
+                            Duration=listening_duration,
+                            Demographic_Coverage=coverage,
+                            Target_Demographic=target_group,
+                            Target_Age_Min=age_min,
+                            Target_Age_Max=age_max,
+                            Target_Gender=gender,
+                            Actual_IndividualIntervention_Config=intervention_cfg)
+                    )
         )
-
-        if trigger_condition_list:
-            IVM_event.Event_Coordinator_Config.Intervention_Config = NodeLevelHealthTriggeredIV(
-                Trigger_Condition_List=trigger_condition_list,
-                Target_Residents_Only=target_residents_only,
-                Property_Restrictions_Within_Node=ind_property_restrictions,
-                Node_Property_Restrictions=node_property_restrictions,
-                Duration=listening_duration,
-                Demographic_Coverage=coverage,
-                Actual_IndividualIntervention_Config=intervention_cfg
-            )
-        else:
-            IVM_event.Event_Coordinator_Config.Target_Residents_Only = True if target_residents_only else False
-            IVM_event.Event_Coordinator_Config.Demographic_Coverage = coverage
-            IVM_event.Event_Coordinator_Config.Property_Restrictions_Within_Node=ind_property_restrictions
-            IVM_event.Event_Coordinator_Config.Node_Property_Restrictions=node_property_restrictions
-            IVM_event.Event_Coordinator_Config.Intervention_Config = intervention_cfg
-
-        config_builder.add_event(IVM_event)
+        config_builder.add_event(ivm_event)
+    else:
+        for start_day in start_days:
+                ivm_event = CampaignEvent(
+                    Start_Day=start_day,
+                    Nodeset_Config=node_cfg,
+                    Event_Coordinator_Config=StandardInterventionDistributionEventCoordinator(
+                        Target_Residents_Only=target_residents_only,
+                        Demographic_Coverage=coverage,
+                        Property_Restrictions_Within_Node=ind_property_restrictions,
+                        Node_Property_Restrictions=node_property_restrictions,
+                        Target_Demographic=target_group,
+                        Target_Age_Min=age_min,
+                        Target_Age_Max=age_max,
+                        Target_Gender=gender,
+                        Intervention_Config=intervention_cfg)
+                )
+                config_builder.add_event(ivm_event)

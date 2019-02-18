@@ -154,7 +154,7 @@ class DataFrameWrapper:
         combined_df = pd.DataFrame([])
         stratifiers = set()
         for obj in individual_objects:
-            combined_df = combined_df.append(obj._dataframe)
+            combined_df = combined_df.append(obj._dataframe, sort=True)
             stratifiers = stratifiers.union(obj.stratifiers)
             # stratifiers = stratifiers or obj.stratifiers
             # if set(obj.stratifiers) != set(stratifiers):

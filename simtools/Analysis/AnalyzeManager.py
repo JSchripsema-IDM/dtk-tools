@@ -44,13 +44,16 @@ def pool_worker_initializer(func, analyzers, cache, path_mapping) -> None:
 
 
 class AnalyzeManager(CacheEnabled):
-    def __init__(self, exp_list=None, sim_list=None, analyzers=None, working_dir=None, force_analyze=False,
-                 verbose=True):
+    def __init__(self, exp_list=None, sim_list=None, analyzers=None, working_dir=None, force_analyze=False, max_sims=None,
+                 verbose=True, force_manager_working_directory=False):
         super().__init__()
         self.analyzers = []
         self.experiments = set()
         self.simulations = {}
         self.ignored_simulations = {}
+        self.max_sims = max_sims
+        self.force_wd = force_manager_working_directory
+
         try:
             with SetupParser.TemporarySetup() as sp:
                 self.max_threads = min(os.cpu_count(), int(sp.get('max_threads', 16)))
@@ -83,6 +86,14 @@ class AnalyzeManager(CacheEnabled):
         self.cache = None
 
     def filter_simulations(self, simulations):
+        if self.max_sims is not None:
+            # If we already reached the maximum_simulation count -> exit
+            if self.max_sims <= 0 : return
+
+            # Truncate the simulations to only add the needed ones
+            simulations = simulations[:self.max_sims - len(self.simulations)]
+            self.max_sims -= len(self.simulations)
+
         if self.force_analyze:
             self.simulations.update({s.id: s for s in simulations})
         else:
@@ -126,8 +137,13 @@ class AnalyzeManager(CacheEnabled):
             analyzer.uid += "({})".format(number)
             number += 1
 
+        # Setup the working dir
+        if self.force_wd:
+            analyzer.working_dir = self.working_dir
+        else:
+            analyzer.working_dir = analyzer.working_dir or self.working_dir
+
         # Then call the initialize method
-        analyzer.working_dir = analyzer.working_dir or self.working_dir
         analyzer.initialize()
 
         self.analyzers.append(analyzer)
@@ -147,7 +163,7 @@ class AnalyzeManager(CacheEnabled):
         # If no analyzers -> quit
         if not all((self.analyzers, self.simulations)):
             print("No analyzers or experiments selected, exiting...")
-            return
+            return False
 
         # Clear the cache
         self.cache = self.initialize_cache(shards=self.max_threads)
@@ -189,7 +205,7 @@ class AnalyzeManager(CacheEnabled):
 
         if scount == 0 and self.verbose:
             print("No experiments/simulations for analysis.")
-            exit()
+            return False
 
         # Create the pool
         pool = Pool(max_threads,
@@ -204,7 +220,7 @@ class AnalyzeManager(CacheEnabled):
             # If an exception happen, kill everything and exit
             if self._check_exception():
                 pool.terminate()
-                return
+                return False
 
             time_elapsed = time.time() - start_time
             if self.verbose:
@@ -245,3 +261,5 @@ class AnalyzeManager(CacheEnabled):
 
         for a in self.analyzers:
             a.destroy()
+
+        return True

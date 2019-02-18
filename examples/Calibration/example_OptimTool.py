@@ -154,7 +154,7 @@ if num_params == 0:
     print(warning_note)
     exit()
 
-r = math.exp(1/float(num_params)*(math.log(volume_fraction) - gammaln(num_params/2.+1) + num_params/2.*math.log(math.pi)))
+r = OptimTool.get_r(num_params, volume_fraction)
 # it used to be r=(volume_fraction/V_n)^(1/n), which can be greater than 1 for large n(num_params > 18)
 # now r = (volume_fraction * V_n)^(1/n)
 

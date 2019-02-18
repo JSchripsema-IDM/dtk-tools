@@ -53,3 +53,4 @@ install/*.whl
 simtools/simtools.ini.bak
 .overseer_check_lock
 .setup_parser_init_lock
+.tox/*
