@@ -60,10 +60,12 @@ def ivermectin_config_by_duration(box_duration='WEEK', initial_effect: float=0.9
     return cfg
 
 
-def add_ivermectin(config_builder, drug_code, coverage, start_days,
-                   trigger_condition_list=None, triggered_campaign_delay=0,
-                   listening_duration=-1, nodeids=None, target_residents_only=1,
-                   node_property_restrictions=None, ind_property_restrictions=None):
+
+def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: float=0.95, coverage: float=1.0,
+                   start_days: list=None, trigger_condition_list: list=None, triggered_campaign_delay: int=0,
+                   listening_duration: int=-1, nodeIDs: list=None, target_group: any="Everyone",
+                   target_residents_only: bool=1, node_property_restrictions: list=None,
+                   ind_property_restrictions: list=None):
 
     """
     Add an ivermectin intervention to the campaign using the **Ivermectin**
@@ -73,12 +75,15 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days,
         config_builder: The :py:class:`DTKConfigBuilder
             <dtk.utils.core.DTKConfigBuilder>` containing the campaign
             configuration.
-        drug_code: The duration of drug efficacy. Supported values are:
+        box_duration: The length of ivermectin effect for **Box_Duration**.
+            Accepted values are an integer, float, or one of the following:
 
             * DAY
             * WEEK
             * MONTH
-            * XDAYS where "X" is an integer.
+            * 90DAYS
+
+        initial_effect: The initial efficacy of the drug treatment.
         coverage: The proportion of the population covered by the intervention
             (**Demographic_Coverage** parameter).
         start_days: A list of days when ivermectin is distributed
@@ -93,6 +98,11 @@ def add_ivermectin(config_builder, drug_code, coverage, start_days,
         listening_duration: The number of time steps that the distributed
             event will monitor for triggers. Default is -1, which is
             indefinitely.
+        node_IDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter).
+        target_group: A dictionary targeting an age range and gender of
+            individuals for treatment. In the format
+            ``{"agemin": x, "agemax": y, "gender": "z"}``.
         target_residents_only: Set to 1 to target only individuals
             who started the simulation in this node and are still in
             this node; set to 0 to target all individuals, including those who are
