@@ -16,7 +16,7 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
 
     """
     Add a migration event to a campaign that moves individuals from one node
-    to another using the **MigrationIndividuals** class.
+    to another using the **MigrateIndividuals** class.
 
     Args:
         cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`

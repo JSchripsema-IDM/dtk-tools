@@ -42,7 +42,9 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
             so the example restricts the intervention to (Swamp Land AND No
             Roads) OR (Forest Land) nodes.
         triggered_campaign_delay: The number of days the campaign is delayed
-            after being triggered.
+            after being triggered. Eligibility of people or nodes
+            for the campaign is evaluated on the start day, not the triggered
+            day.
         trigger_condition_list: A list of the events that will
             trigger the intervention. If included, **start_day** is the day
             when monitoring for triggers begins.
@@ -51,7 +53,8 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
             indefinitely.
         disqualifying_properties: A list of NodeProperty key:value pairs that
             cause an intervention to be aborted (persistent interventions
-            will stop being distributed to nodes with these values).
+            will stop being distributed to nodes with these values). For
+            example, ["Place:Swamp"].
 
     Returns:
         None
@@ -178,7 +181,8 @@ def change_individual_property_at_age(cb, target_property_name: str=None, target
             indefinitely.
         disqualifying_properties: A list of NodeProperty key:value pairs that
             cause an intervention to be aborted (persistent interventions
-            will stop being distributed to nodes with these values).
+            will stop being distributed to nodes with these values).  For
+            example, ["Place:Swamp"].
 
     Returns:
         None
@@ -247,9 +251,10 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
                                listening_duration: int=-1, blackout_flag: bool=True,
                                disqualifying_properties: list=None, target_residents_only: bool=False):
     """
-    Add an intervention that changes an individual's individual property at
-    after a triggering event using the **PropertyValueChanger** class.
-
+    Add an intervention that changes the individual property value to another on a
+    particular day or after a triggering event using the
+    **PropertyValueChanger** class.
+    
     Args:
         cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
             containing the campaign configuration.
@@ -297,7 +302,8 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
             to be distributed to the same person more than once a day.
         disqualifying_properties: A list of NodeProperty key:value pairs that
             cause an intervention to be aborted (persistent interventions
-            will stop being distributed to nodes with these values).
+            will stop being distributed to nodes with these values). For
+            example, ["Place:Swamp"].
         target_residents_only: Set to True to target only the individuals who
             started the simulation in this node and are still in the node.
 

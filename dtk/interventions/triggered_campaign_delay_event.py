@@ -11,35 +11,51 @@ def triggered_campaign_delay_event(config_builder, start: int=0,  nodeIDs: list=
                                    node_property_restrictions: list=None, ind_property_restrictions: list=None,
                                    only_target_residents: bool=1):
     """
-    Creates a triggered campaign that broadcasts an event after a delay. The event it broadcasts can be specified
-    or it is randomly generated. You can use either FIXED_DURATION or GAUSSIAN_DURATION for the delay
+    Create a triggered campaign that broadcasts an event after a delay. The
+    event it broadcasts can be specified or randomly generated.
+
     Args:
-        config_builder:
-        start: the first day of the campaign
-        nodeIDs: list of nodeIDs there this campaign
-        delay_distribution: distribution of the length of the delay, can be FIXED_DURAION or GAUSSIAN_DURATION,
-            FIXED_DURATION is the default
-        delay_period_mean: for GAUSSIAN_DURATION: the mean time of the duration of the event being sent out
-        delay_period_std_dev: for GAUSSIAN_DURATION: the std deviation of the duration of the event being sent out
-        delay_period_max: for GAUSSIAN_DURATION: the maximum time of the duration of the event being sent out
-        coverage: sets Demographic_Coverage
-        triggered_campaign_delay: for FIXED_DURATION: the delay time of the event being sent out
-        trigger_condition_list: list of events that trigger the delayed event broadcast,
-            example: ["HappyBirthday", "Received_Treatment"]
-        listening_duration: the duration for which the listen for the trigger, Default: -1 indicates "indefinitely/forever"
-        event_to_send_out: if specified, the event that will be sent out after the delay
-        node_property_restrictions: Restricts intervention based on list of dictionaries of node properties in
-            format: [{"Land":"Swamp", "Roads":"No"}, {"Land": "Forest"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are nodes with (Swamp Land AND No Roads) OR (Forest Land) nodes
-        ind_property_restrictions: Restricts intervention based on list of dictionaries of individual properties in
-            format: [{"BitingRisk":"High", "IsCool":"Yes}, {"IsRich": "Yes"}]; default is no restrictions, with
-            restrictions within each dictionary are connected with "and" and within the list are "or", so the
-            example restrictions are individuals with (High Biting Risk AND Yes IsCool) OR (IsRich) individuals
-        only_target_residents: only affects people who started the simulation and still are in the node targeted
+        config_builder: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
+            containing the campaign configuration.
+        start: The day on which to start distributing the intervention
+            (**Start_Day** parameter).
+        nodeIDs: The list of nodes to apply this intervention to (**Node_List**
+            parameter). If not provided, defaults to all nodes.
+        delay_distribution: The distribution type of the length of the delay.
+            Possible values are FIXED_DURATION or GAUSSIAN_DURATION.
+        delay_period_mean: For GAUSSIAN_DURATION, the mean duration of the
+            delay period.
+        delay_period_std_dev: For GAUSSIAN_DURATION, the standard deviation of
+            the delay period.
+        delay_period_max: For GAUSSIAN_DURATION, the maximum duration of the
+            delay period.
+        coverage: The proportion of the population covered by the intervention
+            (**Demographic_Coverage** parameter).
+        triggered_campaign_delay: For FIXED_DURATION, the duration of the delay
+            period. Eligibility of people or nodes for the campaign is
+            evaluated on the start day, not the triggered day.
+        trigger_condition_list: A list of the events that will
+            trigger the delayed event broadcast. For example, ["HappyBirthday",
+            "Received_Treatment"].
+        listening_duration: The number of time steps that the distributed
+            event will monitor for triggers. Default is -1, which is
+            indefinitely.
+        event_to_send_out: If specified, the event that will be broadcast
+            after the delay.
+        node_property_restrictions:The NodeProperty key:value pairs that
+            nodes must have to receive the intervention
+            (**Node_Property_Restrictions** parameter). In the format
+            ``[{"Place":"RURAL"}, {"ByALake":"Yes}]``.
+        ind_property_restrictions: The IndividualProperty key:value pairs
+            that individuals must have to receive the intervention
+            (**Property_Restrictions_Within_Node** parameter). In the format
+            ``[{"BitingRisk":"High"}, {"IsCool":"Yes}]``.
+        only_target_residents: If true (1), the campaign only affects people
+            who started the simulation in the node and still are in the node
+            targeted.
 
     Returns:
-        The event that will be broadcast after the delay.
+        The event that is broadcast after the delay.
 
     Example:
         ::

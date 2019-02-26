@@ -3,8 +3,8 @@ from dtk.utils.Campaign.CampaignClass import *
 
 def recurring_outbreak(cb, outbreak_fraction=0.01, repetitions=-1, tsteps_btwn=365, target='Everyone', start_day=0, strain=(0,0), nodes={"class": "NodeSetAll"}, outbreak_source="PrevalenceIncrease"):
     """
-    Add recurring introduction of new infections to the campaign using the
-    **OutbreakIndividual** class.
+    Add introduction of new infections to the campaign using the
+    **OutbreakIndividual** class. Outbreaks can be recurring.
 
     Args:
         cb: The The :py:class:`DTKConfigBuilder
