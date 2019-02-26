@@ -1,3 +1,7 @@
+"""
+This is an empty campaign that can be used as a template.
+"""
+
 from dtk.utils.Campaign.CampaignClass import *
 
 

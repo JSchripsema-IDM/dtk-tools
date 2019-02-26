@@ -23,6 +23,16 @@ def add_OutbreakIndividualDengue(config_builder, start, coverage_by_age, strain_
 
     Returns:
         None
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            add_OutbreakIndividualDengue(config_builder, start=1,
+                                         coverage_by_age = {"agemin": 1,
+                                                            "agemax": 12},
+                                         strain_id_name = "DEN-3",
+                                         nodeIDs=[3, 6, 8, 12])
     """
     dengue_event = CampaignEvent(
         Start_Day=int(start),

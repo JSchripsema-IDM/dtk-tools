@@ -72,6 +72,20 @@ def add_migration_event(cb, nodeto, start_day=0, coverage=1, repetitions=1, tste
 
     Returns:
         None
+
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            add_migration_event(cb, nodeto=5, start_day=1, coverage=0.75,
+                                repetitions=1, tsteps_btwn=90,
+                                duration_at_node_distr_type='UNIFORM_DURATION',
+                                duration_of_stay=30, duration_of_stay_2=90,
+                                duration_before_leaving_distr_type='UNIFORM_DURATION',
+                                duration_before_leaving=1,
+                                duration_before_leaving_2=5,
+                                target='Everyone', nodesfrom={"class": "NodeSetAll"},
+                                node_property_restrictions=[{"Place": "Rural"}])
     """
     migration_event = MigrateIndividuals(
         NodeID_To_Migrate_To=nodeto,
@@ -174,6 +188,15 @@ def update_duration_type(migration_event, duration_at_node_distr_type, dur_param
 
     Returns:
         The updated migration event.
+
+
+    Example:
+        ::
+
+            update_duration_type(migration_event,
+                                 duration_at_node_distr_type="UNIFORM_DURATION",
+                                 dur_param_1=2, dur_param_2=5,
+                                 leaving_or_at="at")
     """
     if leaving_or_at == 'leaving':
         trip_end = 'Before_Leaving'

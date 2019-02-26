@@ -26,6 +26,17 @@ def recurring_outbreak(cb, outbreak_fraction=0.01, repetitions=-1, tsteps_btwn=3
 
     Returns:
         A dictionary holding the fraction and the time steps between events.
+
+        Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            recurring_outbreak(cb, outbreak_fraction=0.005, repetitions=3,
+                               tsteps_btwn=30, target={"agemin": 1, "agemax": 5},
+                               start_day=0, strain=("A", "H2N2"),
+                               nodes={"class": "NodeSetAll"},
+                               outbreak_source="PrevalenceIncrease")
+
     """
 
 

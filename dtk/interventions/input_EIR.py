@@ -19,9 +19,23 @@ def add_InputEIR(cb, monthlyEIRs, age_dependence="SURFACE_AREA_DEPENDENT", start
             parameter).
         nodeIDs: The list of nodes to apply this intervention to (**Node_List**
             parameter). If not provided, set value of NodeSetAll.
+        ind_property_restrictions: The IndividualProperty key:value pairs to
+            target (**Property_Restrictions_Within_Node** parameter). In the
+            format ``[{"IndividualProperty1" : "PropertyValue1"},
+            {'IndividualProperty2': "PropertyValue2"}, ...]``
 
     Returns:
         None
+
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            add_InputEIR(cb, monthlyEIRs=[0.39, 0. 19, 0.77, 0, 0, 0, 6.4, 2.2,
+                                          4.7, 3.9, 0.87, 0.58],
+                         age_dependence="SURFACE_AREA_DEPENDENT", start_day=1,
+                         ind_property_restrictions=[{"Age_Bin":
+                         "Age_Bin_Property_From_0_To_6"}])
     """
 
     nodes = NodeSetNodeList(Node_List=nodeIDs) if nodeIDs else NodeSetAll()

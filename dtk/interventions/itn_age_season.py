@@ -69,6 +69,24 @@ def add_ITN_age_season(config_builder, start=1, coverage_all=1, waning={}, disca
 
     Returns:
         None
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            waning = {'Blocking_Config':
+                        {"class": "WaningEffectMapLinearSeasonal",
+                         "Initial_Effect": 0.75,
+                         "Durability_Map": {"Times": [1, 90, 180, 270],
+                                            "Values": [1, 0.8, 0.6, 0.4]
+                                           }
+                         }
+                      }
+            age_dep = {"Times": [0, 4, 10, 60],
+                       "Values": [1, 0.9, 0.8, 0.5]}
+            add_ITN_age_season(config_builder, start=1, coverage_all=1, waning,
+                       age_dep, cost=5, as_birth=True, duration=-1,
+                       node_property_restrictions=[{"Place": "Rural"]):
     """
 
     # Assign net protective properties #

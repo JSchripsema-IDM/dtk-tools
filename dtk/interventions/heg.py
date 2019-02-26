@@ -18,6 +18,13 @@ def heg_release(cb, released_number, num_repetitions = 13, timesteps_between_rep
 
     Returns:
         None
+
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            heg_release(cb, released_number=1000, num_repetitions = 5,
+                        timesteps_between_reps = 7)
     """
 
     heg_release_event = CampaignEvent(

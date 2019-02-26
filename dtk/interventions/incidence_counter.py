@@ -58,6 +58,24 @@ def add_incidence_counter(cb,
 
     Returns:
         None
+
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            add_incidence_counter(cb, start_day=1, count_duration=90,
+                                  count_triggers=['NewClinicalCase',
+                                                  'NewSevereCase'],
+                                  threshold_type='PERCENTAGE',
+                                  thresholds=[0.1, 1],
+                                  triggered_events=['DeployCHW',
+                                                    'MassCampaign'],
+                                  coverage=1, repetitions=4,
+                                  tsteps_btwn_repetitions=90,
+                                  target_group='Everyone',
+                                  node_property_restrictions=[{'Place':'Rural'}]
+                                 )
+
     """
 
     counter_config = {

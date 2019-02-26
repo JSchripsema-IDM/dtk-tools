@@ -22,49 +22,48 @@ def scale_larval_habitats(cb, df, start_day=0, repetitions=1, tsteps_btwn_repeti
             ``[{ "NodeProperty1" : "PropertyValue1" }, 
             {'NodeProperty2': "PropertyValue2"}, ...]``.
 
-    :Examples:
+    Examples:
+        Scale TEMPORARY_RAINFALL by 3-fold for all nodes, all species::
 
-    Scale TEMPORARY_RAINFALL by 3-fold for all nodes, all species::
-
-        df = pd.DataFrame({ 'TEMPORARY_RAINFALL': [3],
-                         })
-
-     Scale TEMPORARY_RAINFALL by 3-fold for all nodes, arabiensis only::
-
-        df = pd.DataFrame({ 'TEMPORARY_RAINFALL.arabiensis': [3],
-                         })
-
-    Scale differently by node ID::
-
-        df = pd.DataFrame({ 'NodeID' : [0, 1, 2, 3, 4],
-                            'CONSTANT': [1, 0, 1, 1, 1],
-                            'TEMPORARY_RAINFALL': [1, 1, 0, 1, 0],
+            df = pd.DataFrame({ 'TEMPORARY_RAINFALL': [3],
                              })
 
-    Scale differently by both node ID and species::
+         Scale TEMPORARY_RAINFALL by 3-fold for all nodes, arabiensis only::
 
-        df = pd.DataFrame({ 'NodeID' : [0, 1, 2, 3, 4],
-                            'CONSTANT.arabiensis': [1, 0, 1, 1, 1],
-                            'TEMPORARY_RAINFALL.arabiensis': [1, 1, 0, 1, 0],
-                            'CONSTANT.funestus': [1, 0, 1, 1, 1]
-                         })
-    
-    Scale some habitats by species and others same for all species::
-
-        df = pd.DataFrame({  'NodeID' : [0, 1, 2, 3, 4],
-                             'CONSTANT.arabiensis': [1, 0, 1, 1, 1],
-                             'TEMPORARY_RAINFALL.arabiensis': [1, 1, 0, 1, 0],
-                             'CONSTANT.funestus': [1, 0, 1, 1, 1],
-                             'LINEAR_SPLINE': [1, 1, 0, 1, 0]
+            df = pd.DataFrame({ 'TEMPORARY_RAINFALL.arabiensis': [3],
                              })
 
-    Scale nodes at different dates::
+        Scale differently by node ID::
 
-        df = pd.DataFrame({  'NodeID' : [0, 1, 2, 3, 4],
-                             'CONSTANT': [1, 0, 1, 1, 1],
-                             'TEMPORARY_RAINFALL': [1, 1, 0, 1, 0],
-                             'Start_Day': [0, 30, 60, 65, 65],
+            df = pd.DataFrame({ 'NodeID' : [0, 1, 2, 3, 4],
+                                'CONSTANT': [1, 0, 1, 1, 1],
+                                'TEMPORARY_RAINFALL': [1, 1, 0, 1, 0],
+                                 })
+
+        Scale differently by both node ID and species::
+
+            df = pd.DataFrame({ 'NodeID' : [0, 1, 2, 3, 4],
+                                'CONSTANT.arabiensis': [1, 0, 1, 1, 1],
+                                'TEMPORARY_RAINFALL.arabiensis': [1, 1, 0, 1, 0],
+                                'CONSTANT.funestus': [1, 0, 1, 1, 1]
                              })
+
+        Scale some habitats by species and others same for all species::
+
+            df = pd.DataFrame({  'NodeID' : [0, 1, 2, 3, 4],
+                                 'CONSTANT.arabiensis': [1, 0, 1, 1, 1],
+                                 'TEMPORARY_RAINFALL.arabiensis': [1, 1, 0, 1, 0],
+                                 'CONSTANT.funestus': [1, 0, 1, 1, 1],
+                                 'LINEAR_SPLINE': [1, 1, 0, 1, 0]
+                                 })
+
+        Scale nodes at different dates::
+
+            df = pd.DataFrame({  'NodeID' : [0, 1, 2, 3, 4],
+                                 'CONSTANT': [1, 0, 1, 1, 1],
+                                 'TEMPORARY_RAINFALL': [1, 1, 0, 1, 0],
+                                 'Start_Day': [0, 30, 60, 65, 65],
+                                 })
     
     Returns:
         None

@@ -41,6 +41,22 @@ def triggered_campaign_delay_event(config_builder, start: int=0,  nodeIDs: list=
     Returns:
         The event that will be broadcast after the delay.
 
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            triggered_campaign_delay_event(config_builder, start=0,
+                                           nodeIDs=[1, 5, 11],
+                                           delay_distribution="GAUSSIAN_DURATION",
+                                           delay_period_mean=14,
+                                           delay_period_std_dev=4,
+                                           delay_period_max=30, coverage=1,
+                                           trigger_condition_list=["HappyBirthday"],
+                                           listening_duration=-1,
+                                           event_to_send_out="FirstCheckup",
+                                           node_property_restrictions=[{"Place": "Urban"}],
+                                           only_target_residents=1)
+
     """
     if nodeIDs:
         node_cfg = NodeSetNodeList(Node_List=nodeIDs)

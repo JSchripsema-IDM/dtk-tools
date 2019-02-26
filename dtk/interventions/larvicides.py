@@ -46,6 +46,14 @@ def add_larvicides(config_builder, start, killing=None, reduction=None, habitat_
 
     Returns:
         None
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            add_larvicides(config_builder, start=1, killing=0.75,
+            reduction=0.9, habitat_target="ALL_HABITATS",
+            nodesIDs=[2, 5, 7])
     """
     event = CampaignEvent(
         Start_Day=start,

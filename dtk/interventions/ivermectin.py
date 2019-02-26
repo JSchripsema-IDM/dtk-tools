@@ -119,6 +119,21 @@ def add_ivermectin(config_builder, box_duration: any="WEEK", initial_effect: flo
     Returns:
         None
 
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            add_ivermectin(config_builder, box_duration=45,
+                           initial_effect=0.75, coverage=0.8,
+                           start_days=[1, 30, 60],
+                           trigger_condition_list=["NewClinicalCase", "NewSevereCase"],
+                           triggered_campaign_delay=7, listening_duration=-1,
+                           nodeIDs=[1, 4, 6],
+                           target_group={"agemin": 3,
+                                         "agemax": 10,
+                                         "gender": "female"},
+                           target_residents_only=1,
+                           ind_property_restrictions=[{"BitingRisk": "Medium"}])
     """
 
     if node_property_restrictions is None:

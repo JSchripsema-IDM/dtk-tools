@@ -61,11 +61,23 @@ def change_biting_risk(cb, start_day=0,
             (**Node_Property_Restrictions** parameter). In the format
             ``[{"NodeProperty1" : "PropertyValue1"}, {'NodeProperty2': "PropertyValue2"}, ...]``
 
-        .. note:: **NewPropertyValue** and **DisqualifyingProperties** have not
+    .. note:: **NewPropertyValue** and **DisqualifyingProperties** have not
             been implemented with this intervention.
 
     Returns:
         None
+
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            change_biting_risk(cb, start_day=5,
+                               risk_config={'Risk_Distribution_Type': 'UNIFORM_DURATION',
+                                            'Uniform_Min': 1,
+                                            'Uniform_Max': 5},
+                               coverage=0.8, repetitions=2,
+                               tsteps_btwn_repetitions=90,
+                               target_group={'agemin': 2, 'agemax': 12})
     """
 
     risk_config = BitingRisk(**risk_config)

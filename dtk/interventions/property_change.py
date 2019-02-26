@@ -12,7 +12,7 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
     """
     Add an intervention that changes the node property value to another on a
     particular day or after a triggering event using the
-    **NodePropertyValueChnager** class.
+    **NodePropertyValueChanger** class.
 
     Args:
         cb: The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>`
@@ -33,7 +33,7 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
         revert: The number of days before a node reverts to its original
             property value. Default of 0 means the new value is kept forever.
         nodeIDs: The list of nodes to apply this intervention to (**Node_List**
-            parameter).
+            parameter). If not provided, defaults to all nodes.
         node_property_restrictions: The NodeProperty key:value pairs that
             nodes must have to receive the intervention (**Node_Property_Restrictions**
             parameter). In the format ``[{"Place":"Swamp", "Place":"NoRoads"},
@@ -55,6 +55,17 @@ def change_node_property(cb, target_property_name: str=None, target_property_val
 
     Returns:
         None
+
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            change_node_property(cb, target_property_name="InterventionStatus",
+            target_property_value="RecentSpray", start_day=0,
+                             daily_prob=1, max_duration=1,
+                             revert=0, triggered_campaign_delay=0,
+                             trigger_condition_list=["SpaceSpraying"],
+                             listening_duration=-1)
 
     """
     if not target_property_name or not target_property_value:
@@ -150,7 +161,7 @@ def change_individual_property_at_age(cb, target_property_name: str=None, target
         revert: The number of days before a node reverts to its original
             property value. Default of 0 means the new value is kept forever.
         nodeIDs: The list of nodes to apply this intervention to (**Node_List**
-            parameter).
+            parameter). If not provided, defaults to all nodes.
         node_property_restrictions: The NodeProperty key:value pairs that
             nodes must have to receive the intervention (**Node_Property_Restrictions**
             parameter). In the format ``[{"Place":"Swamp", "Place":"NoRoads"},
@@ -172,6 +183,17 @@ def change_individual_property_at_age(cb, target_property_name: str=None, target
     Returns:
         None
 
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            change_individual_property_at_age(cb,
+                                              target_property_name= "ImmuneStatus",
+                                              target_property_value="NoMaternalImmunity",
+                                              change_age_in_days=120, start_day=0,
+                                              listening_duration=-1, coverage=1,
+                                              daily_prob=1, max_duration=1,
+                                              revert=0)
     """
     if not target_property_name or not target_property_value or not change_age_in_days:
         raise ValueError("Please define all:  target_property_name and target_property_value and change_age_in_days.\n")
@@ -251,7 +273,7 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
         revert: The number of days before a node reverts to its original
             property value. Default of 0 means the new value is kept forever.
         nodeIDs: The list of nodes to apply this intervention to (**Node_List**
-            parameter).
+            parameter). If not provided, defaults to all nodes.
         node_property_restrictions: The NodeProperty key:value pairs that
             nodes must have to receive the intervention (**Node_Property_Restrictions**
             parameter). In the format ``[{"Place":"Swamp", "Place":"NoRoads"},
@@ -281,6 +303,23 @@ def change_individual_property(cb, target_property_name: str=None, target_proper
 
     Returns:
         None
+
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            change_individual_property(cb,
+                                       target_property_name="InterventionStatus",
+                                       target_property_value="DiagnosedPos",
+                                       target_group="Everyone", start_day=0,
+                                       coverage=1, daily_prob=1,
+                                       max_duration=1, revert=0,
+                                       node_property_restrictions: list=None,
+                                       ind_property_restrictions=[{"InterventionStatus": "Naive"}],
+                                       triggered_campaign_delay=0,
+                                       trigger_condition_list=["HIVTestedPositive"],
+                                       listening_duration=-1, blackout_flag=True,
+                                       target_residents_only=False)
     """
     if not target_property_name or not target_property_value:
         raise ValueError("Please define both:  target_property_name and target_property_value.\n")

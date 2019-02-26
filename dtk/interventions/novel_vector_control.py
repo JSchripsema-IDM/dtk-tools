@@ -32,6 +32,16 @@ def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=None, duration=180, duration_s
 
     Returns:
         None
+
+    Example:
+        ::
+
+            cb = DTKConfigBuilder.from_defaults(sim_example)
+            kill_cfg = {"class": "WaningEffectBox", "Box_Duration": 120,
+                        "Initial_Effect": 0.35}
+            add_ATSB(cb, start=30, coverage=0.15, kill_cfg,
+                     duration=90, duration_std_dev=7,
+                     node_property_restrictions= [{"Place": "Rural"}])
     """
 
     cfg_species = [x for x in cb.get_param('Vector_Species_Names') if cb.get_param('Vector_Species_Params')[x]['Vector_Sugar_Feeding_Frequency'] != 'VECTOR_SUGAR_FEEDING_NONE']
@@ -98,16 +108,17 @@ def add_ATSB(cb, start=0, coverage=0.15, kill_cfg=None, duration=180, duration_s
 def add_topical_repellent(config_builder, start, coverage_by_ages, cost=0, initial_blocking=0.95, duration=0.3,
                           repetitions=1, interval=1, nodeIDs=[]):
     """
-    Add a topical insect repellent intervention (**SimpleIndividualRepellent** class) using the **StandardInterventionDistributionEventCoordinator**.
+    Add a topical insect repellent intervention (**SimpleIndividualRepellent** class)
+    using the **StandardInterventionDistributionEventCoordinator**.
 
     Args:
         config_builder: The The :py:class:`DTKConfigBuilder <dtk.utils.core.DTKConfigBuilder>` containing the 
             campaign configuration.
         start: The day on which to start distributing the intervention (**Start_Day** parameter).
-        coverage_by_ages: The proportion of the population that will receive the 
-            intervention (**Demographic_Coverage** parameter) modified by the 
-            minimum and maximum age range (**Target_Age_Min** and **Target_Age_Max** 
-            in the event coordinator).
+        coverage_by_ages: A list of dictionaries defining the coverage per
+            age group or birth-triggered intervention. For example,
+            ``[{"coverage":1,"min": 1, "max": 10},{"coverage":1,"min": 11,
+            "max": 50}]``
         cost: The cost of each individual application (**Cost_To_Consumer** parameter).
         initial_blocking: The initial blocking effect of the repellent 
             (**Initial_Effect** parameter).
@@ -122,6 +133,17 @@ def add_topical_repellent(config_builder, start, coverage_by_ages, cost=0, initi
 
     Returns:
         None
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            add_topical_repellent(config_builder, start=10,
+                                  coverage_by_ages = [{"coverage": 0.9,
+                                                       "min": 1,
+                                                       "max": 10}],
+                                  cost=1, initial_blocking=0.86, duration=0.3,
+                                  repetitions=2, interval=1, nodeIDs=[1, 4, 19])
     """
 
     repellent = {   "class": "SimpleIndividualRepellent",
@@ -199,6 +221,14 @@ def add_ors_node(config_builder, start, coverage=1, initial_killing=0.95, durati
 
     Returns:
         None
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            add_ors_node(config_builder, start=20, coverage=0.8,
+                         initial_killing=0.85, duration=45, cost=1,
+                         nodeIDs=[1, 4, 7])
     """
 
     ors_config = {  "Reduction_Config": {
@@ -261,6 +291,14 @@ def add_larvicide(config_builder, start, coverage=1, initial_killing=1.0, durati
 
     Returns:
         None
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            add_larvicide(config_builder, start=0, coverage=0.85,
+                          initial_killing=0.75, duration=30, cost=1,
+                          habitat_target="BRACKISH_SWAMP", nodeIDs=[2, 5, 22])
     """
 
     larvicide_config = {  "Blocking_Config": {
@@ -326,6 +364,16 @@ def add_eave_tubes(config_builder, start, coverage=1, initial_killing=1.0, killi
 
     Returns:
         None
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            add_eave_tubes(config_builder, start=7, coverage=0.65,
+                           initial_killing=0.85, killing_duration=90,
+                           initial_blocking=0.95, blocking_duration=365,
+                           outdoor_killing_discount=0.3, cost=1,
+                           nodeIDs=[33, 56, 7])
     """
 
     indoor_config = {   "class": "IRSHousingModification",

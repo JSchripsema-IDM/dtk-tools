@@ -63,7 +63,7 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
         coverage_by_ages: A list of dictionaries defining the coverage per
             age group or birth-triggered intervention. For example,
             ``[{"coverage":1,"min": 1, "max": 10},{"coverage":1,"min": 11,
-            "max": 50},{ "coverage":0.5, "birth":"birth", "duration":34}]``
+            "max": 50}]``
         cost: The per-unit cost (**Cost_To_Consumer** parameter).
         nodeIDs: The list of nodes to apply this intervention to (**Node_List**
             parameter). If not provided, set value of NodeSetAll.
@@ -95,6 +95,19 @@ def add_IRS(config_builder, start, coverage_by_ages, cost=None, nodeIDs=[],
 
     Returns:
         None
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            waning = {"class"=""WaningEffectBox",
+                      "Box_Duration"= 60,
+                      "Initial_Effect"=0.5}
+            add_IRS(config_builder, start=1,
+                    coverage_by_ages=[{"coverage":1,"min": 1, "max": 18},
+                                      {"coverage":0.6,"min": 19, "max": 80}],
+                    cost=1, nodeIDs=[1, 2, 5], initial_killing=0.75,
+                    duration=90, waning, listening_duration=-1)
     """
 
     receiving_irs_event = BroadcastEvent(Broadcast_Event="Received_IRS")
@@ -227,6 +240,18 @@ def add_node_IRS(config_builder, start, initial_killing=0.5, box_duration=90,
 
     Returns:
         None
+
+    Example:
+        ::
+
+            config_builder = DTKConfigBuilder.from_defaults(sim_example)
+            add_node_IRS(config_builder, start=1, initial_killing=0.5,
+                         box_duration=90,
+                         waning_effect_type='WaningEffectBox', cost=1,
+                         irs_ineligibility_duration=14, nodeIDs=[2, 25],
+                         triggered_campaign_delay=7,
+                         trigger_condition_list=['NewSevereCase'],
+                         listening_duration=-1)
     """
     irs_config = copy.deepcopy(node_irs_config)
     irs_config.Killing_Config.Initial_Effect = initial_killing
