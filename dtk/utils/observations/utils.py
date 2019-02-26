@@ -19,6 +19,7 @@ class ParameterOutOfRange(Exception): pass
 class InvalidAnalyzerWeight(Exception): pass
 class AnalyzerSheetException(Exception): pass
 class SiteNodeMappingException(Exception): pass
+class ObsMetadataException(Exception): pass
 
 EMPTY = [None, '', '--select--']  # not sure if this could be something else
 OBS_SHEET_REGEX = re.compile('^Obs-.+$')
@@ -61,7 +62,12 @@ def parse_ingest_data_from_xlsm(filename):
 
     # add pop scaling data to each analyzer specification
     for analyzer in analyzers:
-        analyzer['scale_population'] = obs_metadata['scale_population'][analyzer['channel']]
+        channel = analyzer['channel']
+        try:
+            analyzer['scale_population'] = obs_metadata['scale_population'][channel]
+        except KeyError:
+            raise ObsMetadataException('Channel: %s is not properly specified with scale_population on '
+                                       '\"Observations metadata\" sheet.' % channel)
 
     channels = []
     for channel_name, scaling in obs_metadata['scale_population'].items():
@@ -85,7 +91,7 @@ def _parse_obs_metadata(wb, wb_path):
     scaling_tuples = list(zip(channels, pop_scaling))
     for scaling_tuple in scaling_tuples:
         if (scaling_tuple[0] in EMPTY) ^ (scaling_tuple[1] in EMPTY):
-            raise SiteNodeMappingException('Channel names and pop. scaling selections must map 1-1.')
+            raise ObsMetadataException('Channel names and pop. scaling selections must map 1-1.')
     obs_metadata['scale_population'] = {t[0]: t[1] == DO_POP_SCALING for t in scaling_tuples if t[0] not in EMPTY}
     return obs_metadata
 

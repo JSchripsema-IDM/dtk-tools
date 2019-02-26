@@ -3,6 +3,7 @@ import os
 import time
 from datetime import datetime
 import pandas as pd
+from calibtool.ParameterSet import ParameterSet
 from calibtool.utils import StatusPoint
 from simtools.Analysis.AnalyzeManager import AnalyzeManager
 from simtools.DataAccess.DataStore import DataStore
@@ -62,6 +63,8 @@ class IterationState:
 
         self._status = None
         self.update(**kwargs)
+        if self._status is not None:
+            self._status = StatusPoint[self._status]
 
         if not os.path.exists(self.iteration_directory):
             os.makedirs(self.iteration_directory)
@@ -390,3 +393,31 @@ class IterationState:
         """
         if not self.calibration_name: return
         self.to_file()
+
+    def get_parameter_sets_with_likelihoods(self):
+        likelihoods = self.results['total']  # an ordered list of likelihood floats
+        param_dicts = self.samples_for_this_iteration  # an ordered list of input input parameters (user knobs)
+        if len(likelihoods) != len(param_dicts):
+            raise Exception('Inconsistent iteration data. \'total\' and \'samples_for_this_iteration\' '
+                            'are not the same length')
+
+        # find and attach the sim_id & run number for every parameter set replicate
+        parameter_sets = []
+        for sample_index in range(len(param_dicts)):
+            param_dict = param_dicts[sample_index]
+            likelihood = likelihoods[sample_index]
+
+            replicates_dict = {sim_id: sim_dict for sim_id, sim_dict in self.simulations.items()
+                               if sim_dict['__sample_index__'] == sample_index}
+            if len(replicates_dict) == 0:
+                raise Exception('There should be at least one simulation associated with sample_index: %s. '
+                                'There are none.' % (sample_index, len(replicates_dict)))
+
+            # Create a distinct ParameterSet object for each replicate
+            for sim_id, replicate_dict in replicates_dict.items():
+                run_number = replicate_dict['Run_Number']
+                parameter_set = ParameterSet(param_dict=param_dict, likelihood=likelihood,
+                                             iteration_number=self.iteration, sim_id=sim_id, run_number=run_number)
+                parameter_sets.append(parameter_set)
+
+        return parameter_sets

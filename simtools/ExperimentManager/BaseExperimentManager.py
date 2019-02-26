@@ -244,22 +244,21 @@ class BaseExperimentManager(CacheEnabled):
             logger.info(" | Simulations per batch: {}".format(sim_per_batch))
 
         # Status display
-        while simulations_created != simulations_expected or t.isAlive():
+        while any([p.is_alive() for p in creator_processes]) or t.isAlive():
             sys.stdout.write("\r {} Created simulations: {}/{}".format(next(animation), simulations_created, simulations_expected))
             sys.stdout.flush()
-
-            # Refresh the number of sims created
-            simulations_created = len(self.cache)
-
-            if not any([p.is_alive() for p in creator_processes]):
-                sys.stdout.flush()
-                print("\n\nError during commissioning. Please check the exception and try again...")
-                exit()
-
             time.sleep(0.3)
 
         for p in creator_processes:
             p.join()
+
+        # Refresh the number of sims created
+        simulations_created = len(self.cache)
+
+        if simulations_created != simulations_expected:
+            print("Error during commissioning. {} simulations expected, {} simulations created..."
+                  .format(simulations_expected, simulations_created))
+            return
 
         sys.stdout.write("\r | Created simulations: {}/{}\n".format(simulations_created, simulations_expected))
         sys.stdout.flush()

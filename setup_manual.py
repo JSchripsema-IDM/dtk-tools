@@ -18,6 +18,7 @@ import pkg_resources
 
 from simtools.Utilities.General import timestamp_filename
 from simtools.Utilities.LocalOS import LocalOS
+from dtk import __version__ as DTK_VERSION
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 install_directory = os.path.join(current_directory, 'install')
@@ -266,7 +267,7 @@ def install_packages(reqs):
     from setuptools import setup, find_packages
 
     setup(name='dtk-tools',
-          version='1.0b6',
+          version=DTK_VERSION,
           description='Facilitating submission and analysis of simulations',
           url='https://github.com/InstituteforDiseaseModeling/dtk-tools',
           author='Edward Wenger,'
@@ -276,7 +277,7 @@ def install_packages(reqs):
                  'Milen Nikolov,'
                  'Aaron Roney,'
                  'Zhaowei Du,'
-                 'Prashanth Selvaraj'
+                 'Prashanth Selvaraj,'
                  'Clark Kirkman IV',
           author_email='ewenger@intven.com,'
                        'braybaud@intven.com,'
@@ -285,7 +286,7 @@ def install_packages(reqs):
                        'mnikolov@intven.com,'
                        'aroney@intven.com,'
                        'zdu@intven.com,'
-                       'pselvaraj@intven.com'
+                       'pselvaraj@intven.com,'
                        'ckirkman@intven.com',
           packages=find_packages(),
           install_requires=[],

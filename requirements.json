@@ -7,9 +7,8 @@
     "test": ">="
   },
   "numpy": {
-    "version": "1.14.1+mkl",
-    "test": ">=",
-    "wheel": "numpy-1.14.1+mkl-cp36-cp36m-win_amd64.whl"
+    "version": "1.16.1",
+    "test": "=="
   },
   "packaging": null,
   "pyCOMPS": {

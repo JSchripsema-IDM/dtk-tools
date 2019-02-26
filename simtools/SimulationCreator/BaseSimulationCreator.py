@@ -36,12 +36,16 @@ class BaseSimulationCreator(Process):
         self.pre_creation()
 
         for batch in iter(self.work_queue.get, None):
+            if not batch:
+                break
+
             for mod_fn_list in batch:
                 cb = pickle.loads(pickle.dumps(self.config_builder, protocol=pickle.HIGHEST_PROTOCOL))
 
                 # modify next simulation according to experiment builder
                 # also retrieve the returned metadata
                 tags = self.initial_tags.copy() if self.initial_tags else {}
+
                 for func in mod_fn_list:
                     md = func(cb)
                     tags.update(md)

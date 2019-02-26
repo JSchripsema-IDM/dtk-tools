@@ -619,7 +619,8 @@ class TestIterationState(unittest.TestCase):
                       analyzers={}, results=[], iteration=0, experiment_id=None, resume_point=0)
 
     def setUp(self):
-        self.state = IterationState()
+        # self.state = IterationState()
+        self.input_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'input')
 
     def example_settings(self):
         self.state.parameters = dict(values=[[0, 1], [2, 3], [4, 5]], names=['p1', 'p2'])
@@ -649,6 +650,43 @@ class TestIterationState(unittest.TestCase):
         np.testing.assert_array_equal(next_point_new['latest_samples'],
                                       next_point_old['latest_samples'])
         os.remove('tmp.json')
+
+    def test_get_parameter_sets_with_likelihoods(self):
+        # load up our sample IterationState object
+        iteration_directory = os.path.join(self.input_path, 'sample_iteration', 'iter2')
+        iteration_json = os.path.join(iteration_directory, 'IterationState.json')
+        iteration_state = IterationState.from_file(filepath=iteration_json)
+
+        # get ParameterSet objects
+        parameter_sets = iteration_state.get_parameter_sets_with_likelihoods()
+
+        # verify that the obtained info is correct
+        sample_parameter_set = [ps for ps in parameter_sets if ps.sim_id == '48e32ba8-5618-e911-a2bd-c4346bcb1555'][0]
+        expected_parameter_dict = {
+            'Base Infectivity': 0.0004387700180648397,
+            'Circumcision Reduced Acquire': 0.6,
+            'Sexual Debut Age Female Weibull Scale': 16.68597913701478,
+            'Sexual Debut Age Female Weibull Heterogeneity': 0.05371882934122224,
+            'Sexual Debut Age Male Weibull Scale': 15.550981690258908,
+            'Sexual Debut Age Male Weibull Heterogeneity': 0.042083429572395026,
+            'Male To Female Young': 1.2264968386594102,
+            'Male To Female Old': 2.953121144250777,
+            'Risk Assortivity': 0.5667730313054367,
+            'Homa_Bay: LOW Risk': 0.6980632670179557,
+            'Kisii: LOW Risk': 0.910059663153128,
+            'Kisumu: LOW Risk': 0.7655090954659004,
+            'Migori: LOW Risk': 0.9271959619763279,
+            'Nyamira: LOW Risk': 0.9312071932371089,
+            'Siaya: LOW Risk': 0.693635538851748
+        }
+
+        self.assertEqual(len(parameter_sets), 90)  # 30 parameter sets, 3 replicates
+        self.assertEqual(sample_parameter_set.iteration_number, 2)
+        self.assertEqual(sample_parameter_set.run_number, 54624)
+        self.assertEqual(sample_parameter_set.likelihood, -504.03496646688296)
+        self.assertEqual(sample_parameter_set.sim_id, '48e32ba8-5618-e911-a2bd-c4346bcb1555')
+        self.assertEqual(sample_parameter_set.param_dict, expected_parameter_dict)
+
 
 
 class TestNumpyDecoder(unittest.TestCase):

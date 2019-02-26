@@ -1,6 +1,9 @@
-Documentation available: http://institutefordiseasemodeling.github.io/dtk-tools
+Documentation is currently being updated. 
 
-The `dtk` package is intended to strengthen and simplify the interaction between researchers and the [EMOD model](https://institutefordiseasemodeling.github.io/EMOD/).
+Older developer-written docs are available at: http://institutefordiseasemodeling.github.io/dtk-tools
+Docs currently under construction are available at: https://institutefordiseasemodeling.github.io/Documentation/dtk-tools/index.html
+
+The `dtk` package is intended to strengthen and simplify the interaction between researchers and the [EMOD model](http://idmod.org/docs/general/index.html).
 
 Modules contained in this package are intended to:
 - Empower the user to configure diverse simulations and arbitrarily complex campaigns built up from a standardized library of configuration fragments and utility functions;
@@ -36,7 +39,7 @@ On unix platform:
 Create a `pip.ini` file (`pip.conf` if on Unix) in your virtual environment folder (here `idmtools`) with the following content:
 ```ini
 [global]
-index-url = https://packages.idmod.org/api/pypi/idm-pypi-production/simple
+index-url = https://packages.idmod.org/api/pypi/pypi-production/simple
 ```
 
 Install dtk-tools:

@@ -64,6 +64,7 @@ if __name__ == "__main__":
 
         # Create all the managers
         for experiment in active_experiments:
+
             logger.debug("Looking for manager for experiment %s" % experiment.id)
             if experiment.id not in managers:
                 logger.debug('Creating manager for experiment id: %s' % experiment.id)
@@ -71,10 +72,16 @@ if __name__ == "__main__":
                 try:
                     sys.path.append(experiment.working_directory)
                     manager = ExperimentManagerFactory.from_experiment(experiment)
+                except RuntimeError as r:
+                    # IF the exception tells us the experiment has not been found -> delete it from the DB
+                    if str(r) == "404 NotFound - Failed to retrieve experiment for given id":
+                        DataStore.delete_experiment(experiment)
+                        continue
                 except Exception as e:
                     logger.debug('Exception in creation manager for experiment %s' % experiment.id)
                     logger.debug(e)
                     logger.debug(traceback.format_exc())
+                    continue
 
                 if manager:
                     if manager.location == "LOCAL": manager.local_queue = local_queue

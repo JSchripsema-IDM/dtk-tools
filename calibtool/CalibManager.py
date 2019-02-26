@@ -63,6 +63,12 @@ class CalibManager(object):
         self.current_iteration = None
         self._location = None
         self.resume = False
+        self.experiment_builder_function = None  # if not overridden in the set method, use internally-generated func
+
+    @classmethod
+    def open_for_reading(cls, calibration_directory):
+        return cls(config_builder=None, map_sample_to_model_input_fn=None, sites=None, next_point=None,
+                   name=calibration_directory)
 
     @property
     def location(self):
@@ -119,21 +125,35 @@ class CalibManager(object):
         calibration_time_elapsed = current_time - self.calibration_start
         logger.info("Calibration done (took %s)" % verbose_timedelta(calibration_time_elapsed))
 
-
     def post_iteration(self):
         self.all_results = self.current_iteration.all_results
         self.summary_table = self.current_iteration.summary_table
         self.cache_calibration(iteration=self.iteration+1)
 
-    def exp_builder_func(self, next_params, n_replicates=None):
-        if not n_replicates:
-            n_replicates = self.sim_runs_per_param_set
+    def set_experiment_builder_function(self, exp_builder_function):
+        """
+        Set the experiment builder to a predefined one, such that exp_builder_func will return it
+        Args:
+            exp_builder_function: an experiment builder object
 
-        return ModBuilder.from_combos(
-                [ModFn(self.config_builder.__class__.set_param, 'Run_Number', i+1) for i in range(n_replicates)],
-                [ModFn(site.setup_fn) for site in self.sites],
-                [ModFn(self.map_sample_to_model_input_fn, index, samples.copy() if n_replicates > 1 else samples) for index, samples in  enumerate(next_params)]
-        )
+        Returns: no return
+
+        """
+        self.experiment_builder_function = exp_builder_function
+
+    def exp_builder_func(self, next_params, n_replicates=None):
+        if self.experiment_builder_function is not None:
+            builder = self.experiment_builder_function
+        else:
+            if not n_replicates:
+                n_replicates = self.sim_runs_per_param_set
+
+            builder = ModBuilder.from_combos(
+                    [ModFn(self.config_builder.__class__.set_param, 'Run_Number', i+1) for i in range(n_replicates)],
+                    [ModFn(site.setup_fn) for site in self.sites],
+                    [ModFn(self.map_sample_to_model_input_fn, index, samples.copy() if n_replicates > 1 else samples) for index, samples in  enumerate(next_params)]
+            )
+        return builder
 
     def create_iteration_state(self, iteration):
         if self.resume:
@@ -589,8 +609,27 @@ class CalibManager(object):
         return {site.name: [a.uid for a in site.analyzers] for site in self.sites}
 
     def get_last_iteration(self):
+        """
+        Determines the last (most recent) completed iteration number.
+        Returns: the last completed iteration number as an int
+        """
         calib_data = self.read_calib_data()
-        last_iteration = int(calib_data.get('iteration', None))
-        if not last_iteration:
+        last_iteration_number = int(calib_data.get('iteration', None))
+        iteration = self.state_for_iteration(iteration=last_iteration_number)
+        if last_iteration_number is None:
             raise KeyError('Could not determine what the most recent iteration is.')
-        return last_iteration
+        if iteration.status != StatusPoint.done:
+            last_iteration_number -= 1
+        return last_iteration_number
+
+    def get_parameter_sets_with_likelihoods(self):
+        """
+        Returns: a list of ParameterSet objects.
+        """
+        last_iteration = self.get_last_iteration()
+        parameter_sets = []
+        for iteration_number in range(last_iteration+1):
+            iteration = self.state_for_iteration(iteration=iteration_number)
+            iteration_param_sets = iteration.get_parameter_sets_with_likelihoods()
+            parameter_sets += iteration_param_sets
+        return parameter_sets

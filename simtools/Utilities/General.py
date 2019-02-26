@@ -8,6 +8,7 @@ import sys
 import time
 from io import StringIO
 from itertools import cycle
+from dtk import __version__ as DTK_VERSION
 
 logging_initialized = False
 
@@ -200,15 +201,7 @@ def remove_null_values(null_dict):
 
 def get_tools_revision():
     # Get the tools revision
-    try:
-        import subprocess
-        file_dir = os.path.dirname(os.path.abspath(__file__))
-        revision = subprocess.check_output(["git", "describe", "--tags"], cwd=file_dir).replace("\n", "")
-
-    except:
-        revision = "1.0.0"
-
-    return revision
+    return DTK_VERSION
 
 
 def get_md5(filename):
